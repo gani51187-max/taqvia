@@ -1,0 +1,1937 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0f1a2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Taqvia">
+<meta name="apple-mobile-web-app-title" content="Taqvia">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<title>Taqvia</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #1a2944;
+    --bg2: #233452;
+    --bg3: #2e4163;
+    --gold: #c9a84c;
+    --gold2: #e8c97a;
+    --gold-dim: rgba(201,168,76,0.15);
+    --text: #e8e4d8;
+    --text2: #9fa8b4;
+    --text3: #6b7685;
+    --green: #4caf7d;
+    --green-dim: rgba(76,175,125,0.15);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  .light {
+    --bg: #f5f2eb;
+    --bg2: #ede9df;
+    --bg3: #e2ddd1;
+    --gold: #a07830;
+    --gold2: #7a5a1e;
+    --gold-dim: rgba(160,120,48,0.12);
+    --text: #1a1a1a;
+    --text2: #4a4a4a;
+    --text3: #7a7a7a;
+    --green: #2e7d5a;
+    --green-dim: rgba(46,125,90,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* ─── TOP BAR ─── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 8px;
+  }
+  .topbar-logo {
+    font-family: 'Amiri', serif;
+    font-size: 22px;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+  .topbar-right { display: flex; gap: 12px; align-items: center; }
+  .icon-btn {
+    width: 36px; height: 36px;
+    background: var(--bg3);
+    border: none; border-radius: 50%;
+    color: var(--text2);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .icon-btn:active { background: var(--gold-dim); }
+
+  /* ─── MAIN SCROLL ─── */
+  .main {
+    padding: 0 16px 100px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+
+  /* ─── LOCATION ─── */
+  .location-bar {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--text3);
+    padding: 0 4px;
+  }
+  .location-bar span { color: var(--text2); }
+
+  /* ─── HADİS KARTI ─── */
+  .hadis-card {
+    background: var(--bg2);
+    border: 1px solid var(--gold-dim);
+    border-radius: var(--radius);
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .hadis-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--gold);
+    border-radius: 3px 0 0 3px;
+  }
+  .hadis-card:active { border-color: var(--gold); }
+  .hadis-label {
+    font-size: 11px; font-weight: 600;
+    color: var(--gold); letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 8px;
+    padding-left: 12px;
+  }
+  .hadis-text {
+    font-size: 14px; line-height: 1.7;
+    color: var(--text2); padding-left: 12px;
+    font-style: italic;
+  }
+  .hadis-source {
+    font-size: 12px; color: var(--text3);
+    padding-left: 12px; margin-top: 6px;
+  }
+  .hadis-tap {
+    font-size: 11px; color: var(--text3);
+    padding-left: 12px; margin-top: 4px;
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  /* ─── ÖZEL GÜN BANNER ─── */
+  .special-day {
+    background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.05));
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: var(--radius-sm);
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--gold2);
+    cursor: pointer;
+  }
+  .special-day-icon { font-size: 20px; }
+
+  /* ─── BÜYÜK SAYAÇ ─── */
+  .next-prayer-card {
+    background: var(--bg2);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .next-prayer-card::after {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 140px; height: 140px;
+    background: radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .next-label {
+    font-size: 11px; font-weight: 600;
+    color: var(--text3); letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 4px;
+  }
+  .next-name {
+    font-family: 'Amiri', serif;
+    font-size: 36px; color: var(--gold2);
+    margin-bottom: 2px;
+  }
+  .next-time {
+    font-size: 15px; color: var(--text2);
+    margin-bottom: 16px;
+  }
+  .countdown {
+    font-size: 44px; font-weight: 300;
+    color: var(--text); letter-spacing: 2px;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 16px;
+    line-height: 1;
+  }
+  .countdown span { color: var(--gold); }
+  .kildi-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--green-dim);
+    border: 1px solid var(--green);
+    border-radius: 40px;
+    padding: 10px 28px;
+    color: var(--green);
+    font-size: 15px; font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .kildi-btn:active { transform: scale(0.96); background: rgba(76,175,125,0.25); }
+  .kildi-btn.done {
+    background: var(--green-dim);
+    border-color: var(--green);
+    color: var(--green);
+    opacity: 0.6;
+  }
+
+  /* ─── STREAK ─── */
+  .streak-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg2); border-radius: var(--radius-sm);
+    padding: 12px 16px;
+  }
+  .streak-left { display: flex; align-items: center; gap: 10px; }
+  .streak-icon { font-size: 24px; }
+  .streak-info { display: flex; flex-direction: column; }
+  .streak-num { font-size: 22px; font-weight: 600; color: var(--text); line-height: 1; }
+  .streak-lbl { font-size: 12px; color: var(--text3); }
+  .streak-right { font-size: 12px; color: var(--text2); text-align: right; line-height: 1.5; }
+
+  /* ─── 5 VAKİT LİSTESİ ─── */
+  .vakitler {
+    background: var(--bg2);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .vakitler-header {
+    padding: 14px 16px 10px;
+    font-size: 12px; font-weight: 600;
+    color: var(--text3); letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--bg3);
+  }
+  .vakit-row {
+    display: flex; align-items: center;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--bg3);
+    transition: background 0.15s;
+  }
+  .vakit-row:last-child { border-bottom: none; }
+  .vakit-row.active { background: var(--gold-dim); }
+  .vakit-row.kilindi { opacity: 0.5; }
+  .vakit-icon { font-size: 18px; width: 30px; }
+  .vakit-name {
+    flex: 1;
+    font-size: 15px; font-weight: 500;
+    color: var(--text);
+    margin-left: 4px;
+  }
+  .vakit-name-sub {
+    display: block; font-size: 11px; font-weight: 400;
+    color: var(--text3); margin-top: 1px;
+  }
+  .vakit-row.active .vakit-name { color: var(--gold2); font-weight: 600; }
+  .vakit-row.bilgi { opacity: 0.7; }
+  .vakit-bilgi-etiket {
+    width: 26px; height: 26px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--text3);
+  }
+  .vakit-saat {
+    font-size: 15px; font-weight: 500;
+    color: var(--text2);
+    font-variant-numeric: tabular-nums;
+    margin-right: 12px;
+  }
+  .vakit-check {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 1.5px solid var(--text3);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 13px;
+    color: transparent;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .vakit-check.done {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+  .vakit-check:active { transform: scale(0.9); }
+  .vakit-alarm {
+    width: 32px; height: 32px; margin-right: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; cursor: pointer; opacity: 0.5;
+    border-radius: 50%; transition: all 0.2s; flex-shrink: 0;
+  }
+  .vakit-alarm:active { background: var(--gold-dim); opacity: 1; }
+  .vakit-alarm.set { opacity: 1; }
+
+  .ses-option-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
+  .ses-option {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px; background: var(--bg3);
+    border: 1.5px solid transparent; border-radius: 14px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .ses-option.selected { border-color: var(--gold); background: var(--gold-dim); }
+  .ses-option-name { font-size: 14px; color: var(--text); font-weight: 600; }
+  .ses-option-desc { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .ses-option-play {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--bg2); display: flex; align-items: center; justify-content: center;
+    color: var(--gold); font-size: 14px; flex-shrink: 0;
+  }
+  .ses-option-play:active { background: var(--gold-dim); }
+  .ses-not {
+    font-size: 11px; color: var(--text3); text-align: center;
+    margin-top: 4px; line-height: 1.5;
+  }
+  .ses-url-box { margin: 12px 0 4px; }
+  .ses-url-lbl { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+  .ses-url-row { display: flex; gap: 8px; }
+  .ses-url-input {
+    flex: 1; min-width: 0; padding: 10px 12px;
+    background: var(--bg3); border: 1px solid transparent;
+    border-radius: var(--radius-sm); color: var(--text);
+    font-size: 13px; font-family: 'Inter', sans-serif;
+  }
+  .ses-url-input:focus { border-color: var(--gold); outline: none; }
+  .ses-url-btn {
+    padding: 10px 16px; background: var(--gold-dim);
+    border: 1px solid var(--gold); border-radius: var(--radius-sm);
+    color: var(--gold2); font-size: 13px; font-weight: 600;
+    cursor: pointer; flex-shrink: 0;
+  }
+  .ses-url-btn:active { background: rgba(201,168,76,0.3); }
+
+  /* ─── BOTTOM NAV ─── */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--bg2);
+    border-top: 1px solid var(--bg3);
+    display: flex;
+    padding-bottom: env(safe-area-inset-bottom, 8px);
+    z-index: 100;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 10px 0 6px;
+    cursor: pointer; border: none; background: none;
+    color: var(--text3); font-size: 10px;
+    font-family: 'Inter', sans-serif;
+    gap: 4px; transition: color 0.2s;
+  }
+  .nav-item .ni { font-size: 22px; }
+  .nav-item.active { color: var(--gold); }
+
+  /* ─── VIRD SAYFASI ─── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .vird-header {
+    padding: 8px 20px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .vird-info-link {
+    margin: -6px 20px 14px; padding: 10px 14px;
+    background: var(--gold-dim); border-radius: 12px;
+    font-size: 13px; color: var(--gold2); text-align: center;
+    cursor: pointer;
+  }
+  .vird-info-link:active { opacity: 0.7; }
+  .vird-info-body { max-height: 70vh; overflow-y: auto; padding-bottom: 4px; }
+  .vinfo-section { margin-bottom: 18px; }
+  .vinfo-h { font-size: 15px; color: var(--gold2); font-weight: 700; margin-bottom: 6px; }
+  .vinfo-zikir {
+    font-family: 'Amiri', serif; font-size: 15px; color: var(--gold);
+    background: var(--bg3); padding: 8px 12px; border-radius: 10px;
+    margin: 6px 0; line-height: 1.6;
+  }
+  .vinfo-p { font-size: 13.5px; color: var(--text2); line-height: 1.6; margin-bottom: 4px; }
+  .vinfo-kaynak { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .vinfo-tip { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 8px; }
+  .vinfo-tip b { color: var(--gold2); }
+  .vird-title {
+    font-family: 'Amiri', serif;
+    font-size: 26px; color: var(--gold2);
+  }
+  .vird-subtitle { font-size: 12px; color: var(--text3); }
+  .add-vird-btn {
+    width: 38px; height: 38px;
+    background: var(--gold);
+    border: none; border-radius: 50%;
+    color: var(--bg); font-size: 22px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-weight: 300;
+  }
+
+  .vird-list { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+
+  .vird-card {
+    background: var(--bg2);
+    border-radius: var(--radius);
+    padding: 14px;
+    cursor: pointer;
+    border: 1px solid var(--gold-dim);
+    transition: border-color 0.2s;
+  }
+  .vird-card.active-vird { border-color: var(--gold); }
+  .vird-card-top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .vird-name {
+    font-size: 15px; font-weight: 500; color: var(--text);
+    flex: 1;
+  }
+  .vird-count-lbl {
+    font-size: 13px; color: var(--text3);
+    margin-top: 2px;
+  }
+  .vird-nums {
+    text-align: right;
+  }
+  .vird-current {
+    font-size: 28px; font-weight: 600;
+    color: var(--gold2); line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .vird-target { font-size: 12px; color: var(--text3); }
+
+  .vird-progress {
+    height: 4px; background: var(--bg3);
+    border-radius: 2px; overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .vird-progress-fill {
+    height: 100%; background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+  .vird-progress-fill.done { background: var(--green); }
+
+  .vird-actions { display: flex; gap: 8px; }
+  .vird-tap-btn {
+    flex: 1; padding: 9px;
+    background: var(--gold-dim); border: 1px solid var(--gold);
+    border-radius: var(--radius-sm);
+    color: var(--gold2); font-size: 15px;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    transition: background 0.15s, transform 0.1s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .vird-tap-btn:active { background: rgba(201,168,76,0.3); transform: scale(0.97); }
+  .vird-tap-btn.done-btn {
+    background: var(--green-dim); border-color: var(--green);
+    color: var(--green);
+  }
+  .vird-reset-btn {
+    width: 36px; height: 36px;
+    background: var(--bg3); border: none;
+    border-radius: var(--radius-sm);
+    color: var(--text3); font-size: 15px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ─── Namaz Tesbihatı: tek satırlık derli toplu görünüm ─── */
+  .tesbihat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .tesbihat-row:last-child { margin-bottom: 0; }
+  .tesbihat-info { flex: 1; min-width: 0; }
+  .tesbihat-name-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 5px;
+  }
+  .tesbihat-name { font-size: 13.5px; color: var(--text2); }
+  .tesbihat-count {
+    font-size: 14px; font-weight: 600; color: var(--gold2);
+    font-variant-numeric: tabular-nums;
+  }
+  .tesbihat-count.done { color: var(--green); }
+  .tesbihat-progress {
+    height: 4px; background: var(--bg3);
+    border-radius: 2px; overflow: hidden;
+  }
+  .tesbihat-progress-fill {
+    height: 100%; background: var(--gold);
+    border-radius: 2px; transition: width 0.3s;
+  }
+  .tesbihat-progress-fill.done { background: var(--green); }
+  .tesbihat-plus {
+    width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+    background: var(--gold-dim); border: 1px solid var(--gold);
+    color: var(--gold2); font-size: 17px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background 0.15s, transform 0.1s;
+  }
+  .tesbihat-plus:active { background: rgba(201,168,76,0.3); transform: scale(0.9); }
+  .tesbihat-plus.done {
+    background: var(--green-dim); border-color: var(--green);
+    color: var(--green); font-size: 15px;
+  }
+
+  /* ─── VİRD EKLE MODAL ─── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200; display: none;
+    align-items: flex-end;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg2);
+    border-radius: 24px 24px 0 0;
+    padding: 24px 20px 40px;
+    width: 100%;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: var(--bg3); border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+  .modal-title {
+    font-size: 17px; font-weight: 600;
+    color: var(--text); margin-bottom: 16px;
+  }
+  .modal-label {
+    font-size: 12px; font-weight: 600;
+    color: var(--text3); letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .modal-input {
+    width: 100%; padding: 12px 14px;
+    background: var(--bg3); border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    color: var(--text); font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    outline: none; margin-bottom: 14px;
+    transition: border-color 0.2s;
+  }
+  .modal-input:focus { border-color: var(--gold); }
+  .preset-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .preset-chip {
+    padding: 7px 12px; background: var(--bg3);
+    border: 1px solid transparent;
+    border-radius: 20px; font-size: 13px;
+    color: var(--text2); cursor: pointer;
+    transition: all 0.2s;
+  }
+  .preset-chip.selected { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+  .modal-save {
+    width: 100%; padding: 14px;
+    background: var(--gold); border: none;
+    border-radius: var(--radius-sm);
+    color: var(--bg); font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+  }
+
+  /* ─── HADİS DETAY MODAL ─── */
+  .hadis-modal-body {
+    max-height: 70vh; overflow-y: auto;
+  }
+  .hadis-arabic {
+    font-family: 'Amiri', serif;
+    font-size: 22px; text-align: right;
+    line-height: 1.8; color: var(--gold2);
+    margin-bottom: 16px; direction: rtl;
+  }
+  .hadis-full {
+    font-size: 15px; line-height: 1.8;
+    color: var(--text2); margin-bottom: 12px;
+  }
+  .hadis-detail-source {
+    font-size: 13px; color: var(--text3);
+    padding-top: 12px; border-top: 1px solid var(--bg3);
+  }
+
+  /* ─── TAKVIM ─── */
+  .takvim-page { padding: 0 16px 100px; }
+  .takvim-top {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 4px 16px;
+  }
+  .takvim-month {
+    font-family: 'Amiri', serif;
+    font-size: 22px; color: var(--gold2);
+  }
+  .takvim-hicri { font-size: 13px; color: var(--text3); }
+  .events-list { display: flex; flex-direction: column; gap: 10px; }
+  .event-card {
+    background: var(--bg2); border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    display: flex; gap: 14px; align-items: flex-start;
+    cursor: pointer; border: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .event-card:active { border-color: var(--gold-dim); }
+  .event-date {
+    background: var(--gold-dim);
+    border-radius: 8px;
+    padding: 6px 10px;
+    text-align: center; min-width: 44px;
+  }
+  .event-day { font-size: 20px; font-weight: 600; color: var(--gold); line-height: 1; }
+  .event-month { font-size: 11px; color: var(--text3); }
+  .event-info {}
+  .event-name { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .event-desc { font-size: 13px; color: var(--text3); line-height: 1.5; }
+
+  /* ─── AYARLAR ─── */
+  .ayarlar-page { padding: 0 16px 100px; }
+  .ayarlar-section {
+    background: var(--bg2); border-radius: var(--radius);
+    overflow: hidden; margin-bottom: 14px;
+  }
+  .ayar-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--bg3);
+  }
+  .ayar-row:last-child { border-bottom: none; }
+  .ayar-left { display: flex; flex-direction: column; gap: 2px; }
+  .ayar-name { font-size: 15px; color: var(--text); }
+  .ayar-val { font-size: 12px; color: var(--text3); }
+  .toggle {
+    width: 46px; height: 26px;
+    background: var(--bg3); border-radius: 13px;
+    position: relative; cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .toggle.on { background: var(--green); }
+  .toggle::after {
+    content: '';
+    position: absolute; top: 3px; left: 3px;
+    width: 20px; height: 20px;
+    background: white; border-radius: 50%;
+    transition: transform 0.2s;
+  }
+  .toggle.on::after { transform: translateX(20px); }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--bg3); color: var(--text);
+    padding: 10px 20px; border-radius: 20px;
+    font-size: 14px; opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 300; white-space: nowrap;
+    border: 1px solid var(--gold-dim);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ─── TAMAMLANDI ANİMASYON ─── */
+  .celebrate {
+    position: fixed; inset: 0; z-index: 400;
+    display: none; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.6);
+  }
+  .celebrate.show { display: flex; }
+  .celebrate-box {
+    background: var(--bg2); border-radius: 24px;
+    padding: 36px 40px; text-align: center;
+    border: 1px solid var(--gold);
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .celebrate-emoji { font-size: 56px; margin-bottom: 12px; }
+  .celebrate-title {
+    font-family: 'Amiri', serif;
+    font-size: 26px; color: var(--gold2); margin-bottom: 8px;
+  }
+  .celebrate-sub { font-size: 14px; color: var(--text2); line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">تقوى · Taqvia</div>
+  <div class="topbar-right">
+    <button class="icon-btn" onclick="toggleTheme()" title="Tema">☀</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SAYFA: NAMAZ -->
+<!-- ═══════════════════════════════════ -->
+<div id="page-namaz" class="page active">
+  <div class="main">
+
+    <div class="location-bar">
+      📍 <span id="loc-text">Konum alınıyor...</span>
+    </div>
+
+    <!-- Hadis Kartı -->
+    <div class="hadis-card" onclick="openHadisModal()">
+      <div class="hadis-label">✦ Vaktin Sözü</div>
+      <div class="hadis-text" id="hadis-text">Yükleniyor...</div>
+      <div class="hadis-source" id="hadis-source"></div>
+      <div class="hadis-tap">👆 Detay için dokun</div>
+    </div>
+
+    <!-- Özel Gün (varsa) -->
+    <div class="special-day" id="special-day" style="display:none" onclick="openSpecialDay()">
+      <div class="special-day-icon" id="special-day-icon">🌙</div>
+      <div>
+        <div style="font-weight:600" id="special-day-name"></div>
+        <div style="font-size:12px;opacity:0.8" id="special-day-sub"></div>
+      </div>
+      <div style="margin-left:auto; font-size:18px; opacity:0.6">›</div>
+    </div>
+
+    <!-- Büyük Sayaç -->
+    <div class="next-prayer-card">
+      <div class="next-label">Sıradaki Namaz</div>
+      <div class="next-name" id="next-name">—</div>
+      <div class="next-time" id="next-time"></div>
+      <div class="countdown" id="countdown"><span>—</span></div>
+      <button class="kildi-btn" id="kildi-main-btn" onclick="kildimMain()">
+        <span>✓</span> Namazı Kıldım
+      </button>
+    </div>
+
+    <!-- Streak -->
+    <div class="streak-bar">
+      <div class="streak-left">
+        <div class="streak-icon">🔥</div>
+        <div class="streak-info">
+          <div class="streak-num" id="streak-num">0</div>
+          <div class="streak-lbl">gün kesintisiz</div>
+        </div>
+      </div>
+      <div class="streak-right" id="streak-today">
+        Bugün: <strong id="kilindi-count">0</strong>/5 vakit
+      </div>
+    </div>
+
+    <!-- 5 Vakit -->
+    <div class="vakitler">
+      <div class="vakitler-header">Bugünün Vakitleri</div>
+      <div id="vakit-list"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SAYFA: VİRD -->
+<!-- ═══════════════════════════════════ -->
+<div id="page-vird" class="page">
+  <div class="vird-header">
+    <div>
+      <div class="vird-title">Günlük Vird</div>
+      <div class="vird-subtitle" id="vird-tarih"></div>
+    </div>
+    <button class="add-vird-btn" onclick="openVirdModal()">+</button>
+  </div>
+  <div class="vird-info-link" onclick="openVirdInfoModal()">ℹ️ Vird nedir, nasıl yapılır?</div>
+  <div class="vird-list" id="vird-list"></div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SAYFA: TAKVİM -->
+<!-- ═══════════════════════════════════ -->
+<div id="page-takvim" class="page takvim-page">
+  <div class="takvim-top">
+    <div>
+      <div class="takvim-month" id="takvim-month"></div>
+      <div class="takvim-hicri" id="takvim-hicri"></div>
+    </div>
+  </div>
+  <div class="events-list" id="events-list"></div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SAYFA: AYARLAR -->
+<!-- ═══════════════════════════════════ -->
+<div id="page-ayarlar" class="page ayarlar-page">
+  <div style="padding:8px 4px 16px; font-family:'Amiri',serif; font-size:22px; color:var(--gold2)">Ayarlar</div>
+
+  <div class="ayarlar-section">
+    <div class="ayar-row">
+      <div class="ayar-left">
+        <div class="ayar-name">Namaz Hatırlatıcısı</div>
+        <div class="ayar-val">Vakitten 10 dakika önce</div>
+      </div>
+      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <div class="ayar-row">
+      <div class="ayar-left">
+        <div class="ayar-name">Vird Hatırlatıcısı</div>
+        <div class="ayar-val">Günlük saat 21:00</div>
+      </div>
+      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <div class="ayar-row">
+      <div class="ayar-left">
+        <div class="ayar-name">Titreşim</div>
+        <div class="ayar-val">Sayaç hedefinde</div>
+      </div>
+      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <div class="ayar-row" onclick="openSesModal()">
+      <div class="ayar-left">
+        <div class="ayar-name">Hatırlatma Sesi</div>
+        <div class="ayar-val" id="ayar-ses-val">Klasik Alarm</div>
+      </div>
+      <div style="color:var(--text3); font-size:18px">›</div>
+    </div>
+    <div class="ayar-row">
+      <div class="ayar-left">
+        <div class="ayar-name">Tıklama Sesi</div>
+        <div class="ayar-val">Sayaca her dokunuşta</div>
+      </div>
+      <div class="toggle" id="toggle-tiklama-sesi" onclick="toggleTiklamaSesi()"></div>
+    </div>
+  </div>
+
+  <div class="ayarlar-section">
+    <div class="ayar-row">
+      <div class="ayar-left">
+        <div class="ayar-name">Hesaplama Yöntemi</div>
+        <div class="ayar-val">Diyanet İşleri Başkanlığı</div>
+      </div>
+      <div style="color:var(--text3); font-size:18px">›</div>
+    </div>
+    <div class="ayar-row">
+      <div class="ayar-left">
+        <div class="ayar-name">Şehir</div>
+        <div class="ayar-val" id="ayar-sehir">Otomatik (Konum)</div>
+      </div>
+      <div style="color:var(--text3); font-size:18px">›</div>
+    </div>
+  </div>
+
+  <div class="ayarlar-section">
+    <div class="ayar-row" onclick="uygulamayiPaylas()">
+      <div class="ayar-left">
+        <div class="ayar-name">📤 Uygulamayı Paylaş</div>
+        <div class="ayar-val">Arkadaşlarına gönder</div>
+      </div>
+      <div style="color:var(--text3); font-size:18px">›</div>
+    </div>
+  </div>
+
+  <div style="text-align:center; font-size:12px; color:var(--text3); margin-top:24px">
+    Taqvia v0.1 · Namaz vakitleri: Aladhan API
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- BOTTOM NAV -->
+<!-- ═══════════════════════════════════ -->
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="goPage('namaz', this)">
+    <span class="ni">🕌</span><span>Namaz</span>
+  </button>
+  <button class="nav-item" onclick="goPage('vird', this)">
+    <span class="ni">📿</span><span>Vird</span>
+  </button>
+  <button class="nav-item" onclick="goPage('takvim', this)">
+    <span class="ni">📅</span><span>Takvim</span>
+  </button>
+  <button class="nav-item" onclick="goPage('ayarlar', this)">
+    <span class="ni">⚙️</span><span>Ayarlar</span>
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════ -->
+<!-- MODALS -->
+<!-- ═══════════════════════════════════ -->
+
+<!-- Hadis Modal -->
+<div class="modal-overlay" id="hadis-modal" onclick="closeModal('hadis-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="hadis-modal-body">
+      <div class="hadis-arabic" id="hadis-arabic"></div>
+      <div class="hadis-full" id="hadis-full"></div>
+      <div class="hadis-detail-source" id="hadis-detail-source"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Vird Ekle Modal -->
+<div class="modal-overlay" id="vird-modal" onclick="closeModal('vird-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Yeni Vird Ekle</div>
+    <div class="modal-label">Hazır Şablonlar</div>
+    <div class="preset-list" id="preset-list"></div>
+    <div class="modal-label">Adı</div>
+    <input class="modal-input" id="vird-input-name" placeholder="Örn: 100 Salavat" type="text">
+    <div id="target-wrap">
+      <div class="modal-label">Hedef Sayı</div>
+      <input class="modal-input" id="vird-input-target" placeholder="100" type="number" inputmode="numeric">
+    </div>
+    <button class="modal-save" onclick="saveVird()">Vird Ekle</button>
+  </div>
+</div>
+
+<!-- Özel Gün Modal -->
+<div class="modal-overlay" id="special-modal" onclick="closeModal('special-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div id="special-modal-content"></div>
+  </div>
+</div>
+
+<!-- Hatırlatma Sesi Modal -->
+<div class="modal-overlay" id="ses-modal" onclick="closeModal('ses-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Hatırlatma Sesi</div>
+    <div class="ses-option-list" id="ses-option-list"></div>
+    <input type="file" id="ozel-ses-input" accept="audio/*" style="display:none" onchange="ozelSesSecildi(event)">
+    <div class="ses-url-box">
+      <div class="ses-url-lbl">🌐 İnternetten ses linki (mp3)</div>
+      <div class="ses-url-row">
+        <input type="text" id="ses-url-input" class="ses-url-input" placeholder="https://.../ezan.mp3">
+        <button class="ses-url-btn" onclick="ozelSesUrlKullan()">Kullan</button>
+      </div>
+    </div>
+    <div class="ses-not">🔊 simgesine basarak önizleyebilirsin. Vakit girdiğinde uygulama açıkken bu ses otomatik çalar. Gerçek ezan için Pixabay'den indirip GitHub'a koyduğun dosyanın linkini yapıştırabilirsin.</div>
+  </div>
+</div>
+
+<!-- Vird Nedir Modal -->
+<div class="modal-overlay" id="vird-info-modal" onclick="closeModal('vird-info-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Vird Nedir, Nasıl Yapılır?</div>
+    <div class="vird-info-body">
+
+      <div class="vinfo-section">
+        <div class="vinfo-h">1. İstiğfar — Tövbe Kapısı</div>
+        <div class="vinfo-p">Kalbi günah kirinden temizlemek ve rızkın bereketlenmesi için her gün en az 70–100 defa istiğfar getirmek büyük fazilet taşır.</div>
+        <div class="vinfo-zikir">"Estağfirullah el-azîm ve etûbü ileyh"</div>
+        <div class="vinfo-p">Efendimiz (s.a.v.) günde yetmiş defadan fazla tövbe ve istiğfar ettiğini bildirmiştir.</div>
+        <div class="vinfo-kaynak">📖 Buhârî, Daavât 3</div>
+      </div>
+
+      <div class="vinfo-section">
+        <div class="vinfo-h">2. Salavât-ı Şerife — Peygamberimize Bağlılık</div>
+        <div class="vinfo-p">Dünya ve ahiret sıkıntılarının giderilmesi, duaların kabulü ve Efendimiz'in (s.a.v.) şefaatine nail olmak için günlük salavat çekilmelidir.</div>
+        <div class="vinfo-zikir">"Allahümme salli alâ seyyidinâ Muhammedin ve alâ âli seyyidinâ Muhammed"</div>
+        <div class="vinfo-p">Bir defa salavat getirene, Allah'ın on kat rahmetle karşılık verdiği bildirilmiştir.</div>
+        <div class="vinfo-kaynak">📖 Müslim, Salât 70</div>
+      </div>
+
+      <div class="vinfo-section">
+        <div class="vinfo-h">3. Kelime-i Tevhid — İmanın Tazelenmesi</div>
+        <div class="vinfo-p">Zikirlerin en faziletlisidir; kalpteki iman nurunu parlatır. Günde 100 defa okunması tavsiye edilir.</div>
+        <div class="vinfo-zikir">"Lâ ilâhe illallâhü vahdehû lâ şerîke leh, lehül mülkü ve lehül hamdü ve hüve alâ külli şey'in kadîr"</div>
+        <div class="vinfo-p">Bunu günde 100 defa söyleyene on köle azat etmiş gibi sevap yazılır, yüz iyilik verilir, yüz günahı silinir ve o gün akşama kadar şeytandan korunduğu bildirilmiştir.</div>
+        <div class="vinfo-kaynak">📖 Buhârî, Tevhîd 1 · Müslim, Zikir 28</div>
+      </div>
+
+      <div class="vinfo-section">
+        <div class="vinfo-h">4. Tesbihat — Namaz Sonrası ve Gün İçinde</div>
+        <div class="vinfo-p">Sübhanallah, Elhamdülillah ve Allahu Ekber zikirleri hem namaz sonunda hem gün içinde vird edinilmelidir. Uygulamadaki "Namaz Tesbihatı" virdine dokunarak üçünü tek ekranda (33-33-34) çekebilirsin.</div>
+        <div class="vinfo-zikir">"Lâ havle velâ kuvvete illâ billâhil aliyyil azîm"</div>
+        <div class="vinfo-p">Efendimiz bu söz için "Cennet hazinelerinden bir hazinedir" buyurmuştur.</div>
+        <div class="vinfo-kaynak">📖 Buhârî, Tevhîd 9 · Müslim, Zikir 44</div>
+      </div>
+
+      <div class="vinfo-section">
+        <div class="vinfo-h">5. Koruyucu ve Sıkıntı Giderici Zikirler</div>
+        <div class="vinfo-p"><b>Zararlardan korunmak için</b> (sabah-akşam 3 defa):</div>
+        <div class="vinfo-zikir">"Bismillâhillezî lâ yedurru measmihî şey'ün fil-ardı velâ fis-semâi ve hüves-semîul alîm"</div>
+        <div class="vinfo-p"><b>Gafleti dağıtmak için</b> — dile hafif, mizanda ağır iki cümle:</div>
+        <div class="vinfo-zikir">"Subhânallahi ve bihamdihî, subhânallahil azîm"</div>
+        <div class="vinfo-p"><b>Sıkıntı ve dert anında</b> — Hz. Yunus'un (a.s.) duası:</div>
+        <div class="vinfo-zikir">"Lâ ilâhe illâ ente subhâneke innî küntü minez-zâlimîn"</div>
+        <div class="vinfo-kaynak">📖 Enbiyâ Sûresi, 87</div>
+      </div>
+
+      <div class="vinfo-section">
+        <div class="vinfo-h">6. Günlük Kur'an Virdi</div>
+        <div class="vinfo-p">Zikirlerin en büyüğü Kur'an-ı Kerim okumaktır. Her gün düzenli olarak bir cüz veya birkaç sayfa okumak en önemli virttir. Her gece Mülk Sûresi'ni okumak da kabir azabından korunmaya vesiledir.</div>
+      </div>
+
+      <div class="vinfo-section">
+        <div class="vinfo-h">Vird Yaparken Dikkat Edilmesi Gerekenler</div>
+        <div class="vinfo-tip">🌱 <b>Az da olsa devamlı olsun:</b> "Amellerin Allah'a en sevimli olanı, az da olsa devamlı olanıdır." Kendini zorlamayacak sayılarla başla, istikrarla sürdür.</div>
+        <div class="vinfo-tip">💗 <b>Huzur-u kalp:</b> Zikirleri sadece dille değil, manasını düşünerek ve kalben hissederek söylemeye gayret et.</div>
+        <div class="vinfo-tip">⏰ <b>En faziletli vakit:</b> Sabah namazından sonra güneş doğana kadar olan vakit ile ikindi-akşam arası en faziletli vakitlerdir — ama günün her saatinde de yapılabilir.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Kutlama -->
+<div class="celebrate" id="celebrate" onclick="document.getElementById('celebrate').classList.remove('show')">
+  <div class="celebrate-box">
+    <div class="celebrate-emoji" id="celebrate-emoji">✨</div>
+    <div class="celebrate-title" id="celebrate-title">Mâşâallah!</div>
+    <div class="celebrate-sub" id="celebrate-sub"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- JAVASCRIPT -->
+<!-- ═══════════════════════════════════ -->
+<script>
+// ─── PWA: service worker kaydı (kurulabilirlik + çevrimdışı) ───
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+// ─── VERİ ───────────────────────────────────────
+const VAKİTLER_ADI = ['İmsak','Güneş','Öğle','İkindi','Akşam','Yatsı'];
+const VAKİT_İKON   = ['🌙','🌅','☀️','🌤️','🌇','🌃'];
+
+const HADİSLER = [
+  { tr:"Amellerin en hayırlısı az da olsa devamlı olanıdır.", kaynak:"Buhârî, Rikak 18", arabic:"خَيْرُ الْأَعْمَالِ أَدْوَمُهَا وَإِنْ قَلَّ", full:"Hz. Aişe (r.a.) anlatıyor: Rasûlullah (s.a.v.) şöyle buyurdu: 'Amellerin Allah'a en sevimli olanı az da olsa devamlı yapılanıdır.' Hz. Peygamber bir amele başladığında onu sürdürür, devam ederdi." },
+  { tr:"Kolaylaştırınız, zorlaştırmayınız; müjdeleyiniz, nefret ettirmeyiniz.", kaynak:"Buhârî, İlim 11", arabic:"يَسِّرُوا وَلَا تُعَسِّرُوا وَبَشِّرُوا وَلَا تُنَفِّرُوا", full:"Hz. Enes (r.a.) rivayet ediyor: Rasûlullah (s.a.v.) Muaz ve Ebû Musa'yı Yemen'e gönderirken şöyle buyurdu: 'Kolaylaştırınız, zorlaştırmayınız; müjdeleyiniz, nefret ettirmeyiniz; uyuşunuz, ihtilaf etmeyiniz.'" },
+  { tr:"Güler yüzle karşılamak, iyi söz söylemek sadakadır.", kaynak:"Müslim, Zekât 56", arabic:"تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ لَكَ صَدَقَةٌ", full:"Hz. Câbir (r.a.) rivayet ediyor: Rasûlullah (s.a.v.) şöyle buyurdu: 'Her iyilik sadakadır. Kardeşine güler yüzle karşılamak ve ona iyi bir söz söylemek de sadakadır.'" },
+  { tr:"Bir kimse Müslümanım derse onu öldürmeyiniz; o sadece Allah'ın rızasını kasteder.", kaynak:"Müslim, İman 158", arabic:"", full:"İslam'da can emniyeti ve hüsnüzan'ın önemi bu hadiste vurgulanmaktadır." },
+  { tr:"Komşusu açken tok yatan bizden değildir.", kaynak:"Hâkim, Müstedrek", arabic:"مَا آمَنَ بِي مَنْ بَاتَ شَبْعَانًا وَجَارُهُ جَائِعٌ", full:"Bu hadis komşu hakkını ve sosyal dayanışmayı ön plana çıkarır. Bir Müslümanın yalnızca kendi refahını düşünemeyeceğini, etrafındakilerin durumundan sorumlu olduğunu hatırlatır." },
+  { tr:"Mümin müminin aynasıdır.", kaynak:"Ebû Dâvûd, Edeb 49", arabic:"الْمُؤْمِنُ مِرْآةُ الْمُؤْمِنِ", full:"Bu kısa ve özlü hadis, Müslümanların birbirine karşı açık, dürüst ve yardımsever olmasını; birbirinin eksiklerini nazikçe hatırlatmasını emreder. Tıpkı aynada gördüğümüz gibi." },
+  { tr:"Şüphesiz Allah güzeldir, güzelliği sever.", kaynak:"Müslim, İman 147", arabic:"إِنَّ اللَّهَ جَمِيلٌ يُحِبُّ الْجَمَالَ", full:"İbn Mesud'dan (r.a.) rivayet edilmiştir. Kibir hakkında sorulan bir soruya karşı Peygamber (s.a.v.) şöyle buyurmuştur. Burada kastedilen güzellik, hem zahiri temizlik ve düzene verilen önem, hem de ahlaki güzelliktir." },
+  { tr:"Kim bana bir defa salavat getirirse, Allah ona on defa salat eder.", kaynak:"Müslim, Salât 70", arabic:"مَنْ صَلَّى عَلَيَّ صَلَاةً صَلَّى اللَّهُ عَلَيْهِ عَشْرًا", full:"Hz. Ebû Hüreyre (r.a.) rivayet ediyor: Rasûlullah (s.a.v.) şöyle buyurdu: Kim bana bir defa salavat getirirse, Allah ona on kat rahmet eder. Salavat, hem Peygamberimize muhabbetin hem de duaların kabulüne vesile olan en kıymetli zikirlerden biridir." },
+  { tr:"Lâ ilâhe illallah diyene yüz iyilik yazılır, yüz günahı silinir.", kaynak:"Buhârî, Tevhîd 1 · Müslim, Zikir 28", arabic:"لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ", full:"Rasûlullah (s.a.v.) buyurdu: Kim güne girerken bu tevhid zikrini yüz defa söylerse, ona on köle azat etmiş gibi sevap yazılır, yüz iyilik verilir, yüz günahı silinir ve o gün akşama kadar şeytandan korunmuş olur. Kelime-i tevhid, zikirlerin en faziletlisi kabul edilir." },
+  { tr:"Sana cennet hazinelerinden bir hazine öğreteyim mi?", kaynak:"Buhârî, Tevhîd 9 · Müslim, Zikir 44", arabic:"لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ", full:"Rasûlullah (s.a.v.), Ebû Mûsâ el-Eşarî'ye (r.a.) şöyle buyurdu: Sana cennet hazinelerinden bir hazine öğreteyim mi? Lâ havle velâ kuvvete illâ billâh, yani güç ve kuvvet ancak Allah'ın yardımıyladır. Bu söz, sıkıntı anında söylenen en kıymetli zikirlerden biridir." },
+  { tr:"Ben günde yetmiş defadan fazla istiğfar ve tövbe ederim.", kaynak:"Buhârî, Daavât 3", arabic:"أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ فِي اليَوْمِ أَكْثَرَ مِنْ سَبْعِينَ مَرَّةً", full:"Hz. Peygamber (s.a.v.) kendisi masum olduğu halde günde yetmiş defadan fazla istiğfar ettiğini bildirmiştir. Bu, ümmetine de devamlı tövbe ve istiğfarın önemini öğretmek içindir. İstiğfar, kalbi günah kirinden temizler ve rızkı bereketlendirir." },
+  { tr:"Dile hafif, mizanda ağır gelen iki kelime.", kaynak:"Buhârî, Daavât 65 · Müslim, Zikir 31", arabic:"سُبْحَانَ اللَّهِ وَبِحَمْدِهِ سُبْحَانَ اللَّهِ الْعَظِيمِ", full:"Rasûlullah (s.a.v.) buyurdu: İki kelime vardır ki dile hafif, Rahman'a sevimli, mizanda ise çok ağırdır: Sübhânallahi ve bihamdihî, sübhânallahil azîm. Bu zikir, gafleti dağıtmak ve kalbi diri tutmak için kısa ama büyük bir hazinedir." },
+  { tr:"Kur'an'da otuz ayetlik bir sûre vardır, sahibine şefaat eder ta ki onu cennete koyar.", kaynak:"Tirmizî, Fadâilü'l-Kur'ân 9", arabic:"", full:"Rasûlullah (s.a.v.) bu sûrenin Mülk (Tebâreke) Sûresi olduğunu bildirmiştir. Bu hadis sebebiyle her gece yatmadan önce Mülk Sûresi'ni okumak, kabir azabından korunmaya ve şefaate vesile sayılan güzel bir vird olarak benimsenmiştir." },
+  { tr:"Rabbim! Doğrusu ben kendime zulmettim, beni bağışla.", kaynak:"Enbiyâ Sûresi, 87", arabic:"لَا إِلَٰهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ", full:"Hz. Yunus (a.s.) balığın karnındaki sıkıntılı anında bu duayı yaparak Allah'a yöneldi. Allah Teâlâ bu samimi yakarış sebebiyle onu sıkıntısından kurtardığını bildirmiştir. Bu dua, dert ve sıkıntı anlarında okunan en güzel zikirlerden biridir." },
+];
+
+const ÖZEL_GÜNLER = [
+  { ay:1,  gun:1,  ad:"Yılbaşı",            ikon:"🎆", aciklama:"Miladi yılın ilk günü. Yeni bir yıla girmek, şükür ve dua için güzel bir vesile." },
+  { ay:3,  gun:18, ad:"Çanakkale Zaferi",   ikon:"🦅", aciklama:"1915'te gerçekleşen Çanakkale Deniz Zaferimizin yıl dönümü. Şehitlerimizi rahmetle anıyoruz." },
+  { ay:4,  gun:23, ad:"23 Nisan",           ikon:"🌷", aciklama:"Ulusal Egemenlik ve Çocuk Bayramı." },
+  { ay:5,  gun:19, ad:"19 Mayıs",           ikon:"🏃", aciklama:"Atatürk'ü Anma, Gençlik ve Spor Bayramı." },
+  { ay:8,  gun:30, ad:"30 Ağustos",         ikon:"⭐", aciklama:"Zafer Bayramı. Büyük Taarruz'un 1922'deki zaferiyle bağımsızlığımızın sembolü." },
+  { ay:10, gun:29, ad:"Cumhuriyet Bayramı", ikon:"🇹🇷", aciklama:"29 Ekim 1923'te Türkiye Cumhuriyeti ilan edildi. Cumhuriyetimizin kuruluşunu kutluyoruz." },
+];
+
+const VİRD_PRESETS = [
+  { ad:"Namaz Tesbihatı",    hedef:0,   emoji:"🕌", tesbihat:true },
+  { ad:"100 Salavat",        hedef:100, emoji:"✨" },
+  { ad:"100 İstiğfar",       hedef:100, emoji:"💧" },
+  { ad:"100 Tevhid",         hedef:100, emoji:"🌙" },
+  { ad:"33 Sübhanallah",     hedef:33,  emoji:"🌿" },
+  { ad:"33 Elhamdülillah",   hedef:33,  emoji:"🌸" },
+  { ad:"34 Allahuekber",     hedef:34,  emoji:"⭐" },
+  { ad:"99 Esmaül Hüsna",    hedef:99,  emoji:"🔆" },
+  { ad:"Hazine Zikri (Lâ havle)", hedef:100, emoji:"💎" },
+  { ad:"Koruma Duası (Sabah-Akşam)", hedef:3, emoji:"🛡️" },
+  { ad:"Hz. Yunus Duası",    hedef:40,  emoji:"🐳" },
+  { ad:"Günlük Kur'an (En Az 1 Sayfa)", hedef:1, emoji:"📖" },
+  { ad:"Mülk Sûresi (Gece)", hedef:1,   emoji:"🌙" },
+];
+
+// ─── DURUM ──────────────────────────────────────
+let state = {
+  vakitler: null,
+  koordinat: null,
+  sehir: '',
+  darkMode: true,
+  streak: parseInt(localStorage.getItem('streak') || '0'),
+  lastStreakDate: localStorage.getItem('lastStreakDate') || '',
+  kilinanVakitler: JSON.parse(localStorage.getItem('kilinanVakitler') || '{}'),
+  virdler: JSON.parse(localStorage.getItem('virdler') || '[]'),
+  sesAyari: localStorage.getItem('sesAyari') || 'klasik',
+  tiklamaSesi: localStorage.getItem('tiklamaSesi') !== 'off',
+};
+let countdownInterval = null;
+let secilenPreset = null;
+
+// ─── SAYFA NAVİGASYONU ──────────────────────────
+function goPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'vird') renderVirdPage();
+  if (id === 'takvim') renderTakvim();
+}
+
+// ─── TEMA ────────────────────────────────────────
+function toggleTheme() {
+  state.darkMode = !state.darkMode;
+  document.body.classList.toggle('light', !state.darkMode);
+  document.querySelector('.icon-btn').textContent = state.darkMode ? '☀' : '🌙';
+}
+
+// ─── TOAST ───────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─── KUTLAMA ─────────────────────────────────────
+function showCelebrate(emoji, title, sub) {
+  document.getElementById('celebrate-emoji').textContent = emoji;
+  document.getElementById('celebrate-title').textContent = title;
+  document.getElementById('celebrate-sub').textContent = sub;
+  const c = document.getElementById('celebrate');
+  c.classList.add('show');
+  if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
+  setTimeout(() => c.classList.remove('show'), 3000);
+}
+
+// ─── MODAL ───────────────────────────────────────
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function openVirdInfoModal() { openModal('vird-info-modal'); }
+
+// ─── HADİS ───────────────────────────────────────
+// ─── HADİS / VAKTİN SÖZÜ ─────────────────────────
+function gunSirasi() {
+  const d = new Date();
+  const baslangic = new Date(d.getFullYear(), 0, 0);
+  return Math.floor((d - baslangic) / 86400000);
+}
+
+function getCurrentVakitIndex() {
+  if (!state.vakitler) return 0;
+  return (getNextVakitIndex() + 5) % 6; // şu an içinde olduğumuz vakit (bir öncekinden itibaren)
+}
+
+function hadisSec() {
+  const idx = (gunSirasi() * 6 + getCurrentVakitIndex()) % HADİSLER.length;
+  return HADİSLER[idx];
+}
+
+function loadHadis() {
+  const h = hadisSec();
+  document.getElementById('hadis-text').textContent = '"' + h.tr + '"';
+  document.getElementById('hadis-source').textContent = h.kaynak;
+}
+
+function openHadisModal() {
+  const h = hadisSec();
+  document.getElementById('hadis-arabic').textContent = h.arabic || '';
+  document.getElementById('hadis-full').textContent = h.full;
+  document.getElementById('hadis-detail-source').textContent = '📖 Kaynak: ' + h.kaynak;
+  openModal('hadis-modal');
+}
+
+// ─── ÖZEL GÜN ────────────────────────────────────
+function checkSpecialDay() {
+  const now = new Date();
+  const gun = now.getDate(), ay = now.getMonth() + 1;
+  const bugun = ÖZEL_GÜNLER.find(g => g.gun === gun && g.ay === ay);
+  if (bugun) {
+    document.getElementById('special-day').style.display = 'flex';
+    document.getElementById('special-day-icon').textContent = bugun.ikon;
+    document.getElementById('special-day-name').textContent = bugun.ad;
+    document.getElementById('special-day-sub').textContent = 'Bugün önemli bir gün · Detay için dokun';
+    document.getElementById('special-day')._data = bugun;
+  }
+}
+
+function openSpecialDay() {
+  const d = document.getElementById('special-day')._data;
+  if (!d) return;
+  document.getElementById('special-modal-content').innerHTML =
+    `<div style="text-align:center; margin-bottom:16px; font-size:52px">${d.ikon}</div>
+     <div style="font-family:'Amiri',serif;font-size:24px;color:var(--gold2);margin-bottom:12px;text-align:center">${d.ad}</div>
+     <div style="font-size:15px;color:var(--text2);line-height:1.8">${d.aciklama}</div>`;
+  openModal('special-modal');
+}
+
+// ─── KONUM & NAMAZ VAKİTLERİ ─────────────────────
+function uygulamayiPaylas() {
+  const url = window.location.href;
+  const metin = 'Taqvia — namaz vakitleri, vird/zikir takibi ve günlük hatırlatmalar. Dene:';
+  if (navigator.share) {
+    navigator.share({ title: 'Taqvia', text: metin, url }).catch(() => {});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(metin + ' ' + url)
+      .then(() => showToast("Bağlantı kopyalandı, WhatsApp'tan yapıştırabilirsin"))
+      .catch(() => showToast('Bağlantı: ' + url));
+  } else {
+    showToast('Bağlantı: ' + url);
+  }
+}
+
+function init() {
+  loadHadis();
+  checkSpecialDay();
+  renderStreak();
+  renderVirdTarih();
+  renderSesAyarVal();
+  renderTiklamaSesiToggle();
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        state.koordinat = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        fetchVakitlerByCoord(state.koordinat.lat, state.koordinat.lng);
+        fetchSehirAdi(state.koordinat.lat, state.koordinat.lng);
+      },
+      () => fetchVakitlerByCity('Erzurum')
+    );
+  } else {
+    fetchVakitlerByCity('Erzurum');
+  }
+}
+
+async function fetchVakitlerByCoord(lat, lng) {
+  try {
+    const res = await fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lng}&method=13`);
+    const data = await res.json();
+    processVakitler(data.data.timings);
+  } catch(e) {
+    document.getElementById('loc-text').textContent = 'Bağlantı hatası';
+  }
+}
+
+async function fetchVakitlerByCity(city) {
+  try {
+    const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Turkey&method=13`);
+    const data = await res.json();
+    state.sehir = city;
+    document.getElementById('loc-text').textContent = city;
+    document.getElementById('ayar-sehir').textContent = city;
+    processVakitler(data.data.timings);
+  } catch(e) {
+    document.getElementById('loc-text').textContent = 'Bağlantı hatası';
+  }
+}
+
+async function fetchSehirAdi(lat, lng) {
+  try {
+    const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=tr`);
+    const data = await res.json();
+    const sehir = data.city || data.locality || data.principalSubdivision || 'Konum alındı';
+    state.sehir = sehir;
+    document.getElementById('loc-text').textContent = sehir;
+    document.getElementById('ayar-sehir').textContent = sehir + ' (GPS)';
+  } catch(e) {
+    document.getElementById('loc-text').textContent = 'GPS ✓';
+  }
+}
+
+function processVakitler(timings) {
+  // 5 farz namaz vakti + İmsak ve Güneş bilgi olarak.
+  // Sabah namazı İmsak vaktinde girer, Güneş doğunca (Şuruk) çıkar — Güneş namaz vakti değildir.
+  state.vakitler = {
+    'Sabah':  timings.Imsak,    // sabah namazı vakti = imsak (oruçta sahur sonu)
+    'Güneş':  timings.Sunrise,  // bilgi: sabah namazının çıkışı, namaz kılınmaz
+    'Öğle':   timings.Dhuhr,
+    'İkindi': timings.Asr,
+    'Akşam':  timings.Maghrib,
+    'Yatsı':  timings.Isha,
+  };
+  renderVakitler();
+  startCountdown();
+  loadHadis();
+}
+
+// Sadece bu 5 vakit farz namazdır; Güneş bilgi amaçlıdır, "kıldım" ve streak'e dahil değildir.
+const FARZ_VAKITLER = ['Sabah', 'Öğle', 'İkindi', 'Akşam', 'Yatsı'];
+
+// ─── VAKİT RENDER ────────────────────────────────
+function renderVakitler() {
+  if (!state.vakitler) return;
+  const today = todayKey();
+  const kilindi = state.kilinanVakitler[today] || {};
+  const activeIdx = getNextVakitIndex();
+  const html = Object.entries(state.vakitler).map(([ad, saat], i) => {
+    const isActive = i === activeIdx;
+    const isFarz = FARZ_VAKITLER.includes(ad);
+    const isDone = isFarz && kilindi[ad];
+    const altEtiket = ad === 'Sabah'
+      ? '<span class="vakit-name-sub">İmsak · sahur sonu / oruç başlangıcı</span>'
+      : (ad === 'Güneş' ? '<span class="vakit-name-sub">Sabah namazının çıkışı · namaz kılınmaz</span>' : '');
+    const sagTaraf = isFarz
+      ? `<div class="vakit-check ${isDone ? 'done' : ''}" onclick="kildimVakit('${ad}')">${isDone ? '✓' : ''}</div>`
+      : `<div class="vakit-bilgi-etiket" title="Namaz vakti değil, bilgi amaçlı">ⓘ</div>`;
+    return `<div class="vakit-row ${isActive ? 'active' : ''} ${isDone ? 'kilindi' : ''} ${isFarz ? '' : 'bilgi'}">
+      <div class="vakit-icon">${VAKİT_İKON[i]}</div>
+      <div class="vakit-name">${ad}${altEtiket}</div>
+      <div class="vakit-saat">${saat.substring(0,5)}</div>
+      <div class="vakit-alarm" onclick="kurAlarm('${ad}','${saat.substring(0,5)}')" title="Alarm kur">🔔</div>
+      ${sagTaraf}
+    </div>`;
+  }).join('');
+  document.getElementById('vakit-list').innerHTML = html;
+  renderKildiSayisi();
+}
+
+function getNextVakitIndex() {
+  if (!state.vakitler) return 0;
+  const now = new Date();
+  const nowMins = now.getHours() * 60 + now.getMinutes();
+  const vakitMins = Object.values(state.vakitler).map(t => {
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  });
+  for (let i = 0; i < vakitMins.length; i++) {
+    if (nowMins < vakitMins[i]) return i;
+  }
+  return 0; // Gece yarısından sonra → İmsak
+}
+
+function getNextVakit() {
+  if (!state.vakitler) return null;
+  const idx = getNextVakitIndex();
+  const entries = Object.entries(state.vakitler);
+  return { ad: entries[idx][0], saat: entries[idx][1], idx };
+}
+
+// ─── GERİ SAYIM ──────────────────────────────────
+function startCountdown() {
+  if (countdownInterval) clearInterval(countdownInterval);
+  updateCountdown();
+  countdownInterval = setInterval(updateCountdown, 1000);
+}
+
+function updateCountdown() {
+  checkVakitGirisi();
+  const next = getNextVakit();
+  if (!next) return;
+  document.getElementById('next-name').textContent = next.ad;
+  document.getElementById('next-time').textContent = next.saat.substring(0,5);
+
+  const now = new Date();
+  const [h, m] = next.saat.split(':').map(Number);
+  const target = new Date(now);
+  target.setHours(h, m, 0, 0);
+  if (target <= now) target.setDate(target.getDate() + 1);
+
+  const diff = Math.floor((target - now) / 1000);
+  const hh = Math.floor(diff / 3600);
+  const mm = Math.floor((diff % 3600) / 60);
+  const ss = diff % 60;
+
+  const fmt = (n) => String(n).padStart(2, '0');
+  document.getElementById('countdown').innerHTML =
+    `<span>${fmt(hh)}</span>:${fmt(mm)}:${fmt(ss)}`;
+
+  // Kilidimi güncelle (bir sonraki farz namaza göre)
+  const today = todayKey();
+  const kilindi = state.kilinanVakitler[today] || {};
+  const mainBtn = document.getElementById('kildi-main-btn');
+  const farz = getNextFarzVakit();
+  if (farz && kilindi[farz.ad]) {
+    mainBtn.classList.add('done');
+    mainBtn.innerHTML = `<span>✓</span> ${farz.ad} Kılındı`;
+  } else {
+    mainBtn.classList.remove('done');
+    mainBtn.innerHTML = `<span>✓</span> ${farz ? farz.ad + ' Namazını' : 'Namazı'} Kıldım`;
+  }
+}
+
+// ─── KILINDI ─────────────────────────────────────
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+
+function getNextFarzVakit() {
+  // Bir sonraki (veya şu anki) farz namaz vaktini bulur, Güneş'i atlar.
+  if (!state.vakitler) return null;
+  const entries = Object.entries(state.vakitler);
+  const idx = getNextVakitIndex();
+  // idx'ten geriye doğru en yakın "içinde olduğumuz" farz vakti bul
+  for (let k = 0; k < entries.length; k++) {
+    const j = ((idx - 1 - k) % entries.length + entries.length) % entries.length;
+    if (FARZ_VAKITLER.includes(entries[j][0])) {
+      return { ad: entries[j][0], saat: entries[j][1], idx: j };
+    }
+  }
+  return null;
+}
+
+function kildimMain() {
+  const next = getNextFarzVakit();
+  if (!next) return;
+  kildimVakit(next.ad);
+}
+
+function kildimVakit(ad) {
+  if (!FARZ_VAKITLER.includes(ad)) return; // Güneş gibi bilgi vakitleri işaretlenemez
+  const today = todayKey();
+  if (!state.kilinanVakitler[today]) state.kilinanVakitler[today] = {};
+  if (state.kilinanVakitler[today][ad]) {
+    delete state.kilinanVakitler[today][ad];
+    showToast(`${ad} işareti kaldırıldı`);
+  } else {
+    state.kilinanVakitler[today][ad] = true;
+    showToast(`${ad} namazı kaydedildi ✓`);
+    checkStreakUpdate();
+    checkAllPrayers();
+  }
+  localStorage.setItem('kilinanVakitler', JSON.stringify(state.kilinanVakitler));
+  renderVakitler();
+  updateCountdown();
+}
+
+function kurAlarm(ad, saat) {
+  const [h, m] = saat.split(':').map(Number);
+  if (window.AndroidAlarm) {
+    window.AndroidAlarm.set(h, m, ad + ' Namazı vakti');
+  } else if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.alarm) {
+    window.webkit.messageHandlers.alarm.postMessage({hour:h, minute:m, label:ad});
+  } else {
+    // Telefon saat uygulaması intent (Android tarayıcı)
+    const intent = `intent://alarm#Intent;action=android.intent.action.SET_ALARM;i.android.intent.extra.alarm.HOUR=${h};i.android.intent.extra.alarm.MINUTES=${m};S.android.intent.extra.alarm.MESSAGE=${ad}%20Namaz%C4%B1;end`;
+    window.location.href = intent;
+  }
+  showToast(`${ad} için ${saat} alarmı kuruluyor 🔔`);
+}
+
+// ─── HATIRLATMA SESİ ──────────────────────────────
+// Sentetik "ezan/ney" denemeleri insan sesini taklit edemediği için bırakıldı.
+// Onların yerine tarayıcıda gerçekçi sentezlenen klasik alarm sesleri var.
+// Gerçek ezan için "Kendi Sesim" (dosya yükle) veya "İnternetten ses linki" kullanılır.
+const SES_SECENEKLERI = [
+  { id: 'klasik',   ad: 'Klasik Alarm',     aciklama: 'Tekrarlayan bip-bip alarm sesi' },
+  { id: 'dijital',  ad: 'Dijital Bip',      aciklama: 'Hızlı, uyarıcı çift ton' },
+  { id: 'yumusak',  ad: 'Yumuşak Çan',      aciklama: 'Nazik, yükselen zil sesi' },
+  { id: 'ozel',     ad: 'Kendi Sesim',      aciklama: 'Telefonundan bir ses dosyası yükle' },
+];
+
+// Eski sürümden kalan ses tercihlerini yeni karşılıklarına çevir.
+(function migrateSesAyari() {
+  const eski = { ezan: 'klasik', ney: 'yumusak', bildirim: 'dijital' };
+  const mevcut = localStorage.getItem('sesAyari');
+  if (mevcut && eski[mevcut]) {
+    localStorage.setItem('sesAyari', eski[mevcut]);
+    if (typeof state !== 'undefined') state.sesAyari = eski[mevcut];
+  }
+})();
+
+let _audioCtx = null;
+function getAudioCtx() {
+  if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (_audioCtx.state === 'suspended') _audioCtx.resume();
+  return _audioCtx;
+}
+// İlk dokunuşta tarayıcı ses kilidini aç (otomatik çalma izni için gerekli)
+document.addEventListener('click', () => { try { getAudioCtx(); } catch(e) {} }, { once: true });
+
+// Tek bir bip üretir (alarm tonu için temel yapı taşı)
+function bipCal(ctx, freq, baslangic, sure, hacim, tip) {
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = tip || 'square';
+  osc.frequency.value = freq;
+  const t0 = ctx.currentTime + baslangic;
+  gain.gain.setValueAtTime(0, t0);
+  gain.gain.linearRampToValueAtTime(hacim, t0 + 0.01);
+  gain.gain.setValueAtTime(hacim, t0 + sure - 0.02);
+  gain.gain.linearRampToValueAtTime(0, t0 + sure);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(t0);
+  osc.stop(t0 + sure + 0.02);
+}
+
+// Klasik dijital saat alarmı: bip-bip-bip-bip ... iki grup
+function playKlasikAlarm() {
+  const ctx = getAudioCtx();
+  let t = 0;
+  for (let grup = 0; grup < 3; grup++) {
+    for (let i = 0; i < 4; i++) {
+      bipCal(ctx, 880, t, 0.12, 0.22, 'square');
+      t += 0.18;
+    }
+    t += 0.35; // gruplar arası boşluk
+  }
+}
+
+// Dijital bip: hızlı, alçak-yüksek değişen uyarıcı ton
+function playDijitalBip() {
+  const ctx = getAudioCtx();
+  let t = 0;
+  for (let i = 0; i < 8; i++) {
+    bipCal(ctx, i % 2 === 0 ? 1046 : 784, t, 0.1, 0.2, 'square');
+    t += 0.13;
+  }
+}
+
+// Yumuşak çan: nazik, yükselen zil (marimba/çan hissi)
+function playYumusakCan() {
+  const ctx = getAudioCtx();
+  const notalar = [523.25, 659.25, 783.99, 1046.50]; // C5-E5-G5-C6
+  notalar.forEach((f, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = f;
+    const t0 = ctx.currentTime + i * 0.22;
+    gain.gain.setValueAtTime(0, t0);
+    gain.gain.linearRampToValueAtTime(0.25, t0 + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.9);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + 1);
+  });
+}
+
+function sesCal(id) {
+  if (id === 'ozel') {
+    const data = localStorage.getItem('ozelSesData');
+    if (data) {
+      try { new Audio(data).play(); } catch (e) { console.log('Özel ses çalınamadı:', e); }
+    } else {
+      ozelSesYuklemeTetikle();
+      return;
+    }
+  } else {
+    try {
+      if (id === 'klasik') playKlasikAlarm();
+      else if (id === 'dijital') playDijitalBip();
+      else if (id === 'yumusak') playYumusakCan();
+      else playKlasikAlarm();
+    } catch (e) { console.log('Ses çalınamadı:', e); }
+  }
+  if (navigator.vibrate) navigator.vibrate(id === 'yumusak' ? [150] : [200, 100, 200, 100, 200]);
+}
+
+// ─── TIKLAMA SESİ (sayaca her dokunuşta) ─────────
+function playTikSesi() {
+  if (!state.tiklamaSesi) return;
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 1100;
+    const t0 = ctx.currentTime;
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(0.16, t0 + 0.006);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.05);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + 0.06);
+  } catch (e) { /* sessizce geç */ }
+}
+
+function toggleTiklamaSesi() {
+  state.tiklamaSesi = !state.tiklamaSesi;
+  localStorage.setItem('tiklamaSesi', state.tiklamaSesi ? 'on' : 'off');
+  renderTiklamaSesiToggle();
+  if (state.tiklamaSesi) playTikSesi();
+}
+
+function renderTiklamaSesiToggle() {
+  const el = document.getElementById('toggle-tiklama-sesi');
+  if (el) el.classList.toggle('on', state.tiklamaSesi);
+}
+
+function ozelSesYuklemeTetikle() {
+  document.getElementById('ozel-ses-input').click();
+}
+
+function ozelSesSecildi(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 1500000) {
+    showToast('Dosya biraz büyük — kısa bir klip (1-3 sn) daha sağlıklı çalışır');
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      localStorage.setItem('ozelSesData', reader.result);
+      localStorage.setItem('ozelSesAdi', file.name);
+      state.sesAyari = 'ozel';
+      localStorage.setItem('sesAyari', 'ozel');
+      renderSesAyarVal();
+      openSesModal();
+      sesCal('ozel');
+      showToast(`"${file.name}" yüklendi ve seçildi`);
+    } catch (e) {
+      showToast('Dosya kaydedilemedi, biraz daha küçük bir dosya dene');
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function ozelSesSatiriTiklandi() {
+  if (localStorage.getItem('ozelSesData')) seciliSesYap('ozel');
+  else ozelSesYuklemeTetikle();
+}
+
+function ozelSesUrlKullan() {
+  const input = document.getElementById('ses-url-input');
+  const url = (input.value || '').trim();
+  if (!url) { showToast('Önce bir ses linki yapıştır'); return; }
+  if (!/^https?:\/\//i.test(url)) { showToast('Link http:// veya https:// ile başlamalı'); return; }
+  try {
+    localStorage.setItem('ozelSesData', url);
+    localStorage.setItem('ozelSesAdi', 'İnternet sesi');
+    state.sesAyari = 'ozel';
+    localStorage.setItem('sesAyari', 'ozel');
+    renderSesAyarVal();
+    openSesModal();
+    const a = new Audio(url);
+    a.play().catch(() => showToast('Link çalınamadı — dosyaya doğrudan erişilebildiğinden emin ol'));
+    showToast('Ses linki kaydedildi ve seçildi');
+  } catch (e) {
+    showToast('Link kaydedilemedi');
+  }
+}
+
+function ozelSesOnizleVeyaYukle() {
+  if (localStorage.getItem('ozelSesData')) sesCal('ozel');
+  else ozelSesYuklemeTetikle();
+}
+
+function renderSesAyarVal() {
+  const secili = SES_SECENEKLERI.find(s => s.id === state.sesAyari);
+  const el = document.getElementById('ayar-ses-val');
+  if (el && secili) el.textContent = secili.ad;
+}
+
+function openSesModal() {
+  const ozelAdi = localStorage.getItem('ozelSesAdi');
+  const html = SES_SECENEKLERI.map(s => {
+    const ozel = s.id === 'ozel';
+    const aciklama = (ozel && ozelAdi) ? `Seçili: ${ozelAdi} (değiştirmek için dokun)` : s.aciklama;
+    const tikla = ozel ? 'ozelSesSatiriTiklandi()' : `seciliSesYap('${s.id}')`;
+    const playTikla = ozel ? 'ozelSesOnizleVeyaYukle()' : `sesCal('${s.id}')`;
+    const ikon = ozel ? '📂' : '🔊';
+    return `
+    <div class="ses-option ${s.id === state.sesAyari ? 'selected' : ''}" id="ses-opt-${s.id}" onclick="${tikla}">
+      <div>
+        <div class="ses-option-name">${s.ad}</div>
+        <div class="ses-option-desc">${aciklama}</div>
+      </div>
+      <div class="ses-option-play" onclick="event.stopPropagation(); ${playTikla}">${ikon}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('ses-option-list').innerHTML = html;
+  const urlInput = document.getElementById('ses-url-input');
+  const kayitli = localStorage.getItem('ozelSesData') || '';
+  if (urlInput && /^https?:\/\//i.test(kayitli)) urlInput.value = kayitli;
+  openModal('ses-modal');
+}
+
+function seciliSesYap(id) {
+  state.sesAyari = id;
+  localStorage.setItem('sesAyari', id);
+  document.querySelectorAll('.ses-option').forEach(el => el.classList.remove('selected'));
+  const opt = document.getElementById(`ses-opt-${id}`);
+  if (opt) opt.classList.add('selected');
+  renderSesAyarVal();
+  sesCal(id);
+}
+
+// ─── VAKİT GİRİŞİNİ TESPİT ET ────────────────────
+let _lastTetiklenenVakit = localStorage.getItem('lastTetiklenenVakit') || '';
+
+function checkVakitGirisi() {
+  if (!state.vakitler) return;
+  const now = new Date();
+  if (now.getSeconds() > 2) return; // dakikanın ilk 2 saniyesinde kontrol et
+  const hm = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  for (const [ad, saat] of Object.entries(state.vakitler)) {
+    if (saat.substring(0,5) === hm) {
+      const key = `${todayKey()}_${ad}`;
+      if (_lastTetiklenenVakit !== key) {
+        _lastTetiklenenVakit = key;
+        localStorage.setItem('lastTetiklenenVakit', key);
+        sesCal(state.sesAyari);
+        showToast(`🕐 ${ad} vakti girdi`);
+        loadHadis();
+      }
+      break;
+    }
+  }
+}
+
+function renderKildiSayisi() {
+  const today = todayKey();
+  const kilindi = state.kilinanVakitler[today] || {};
+  const sayi = FARZ_VAKITLER.filter(ad => kilindi[ad]).length;
+  document.getElementById('kilindi-count').textContent = sayi;
+}
+
+function checkAllPrayers() {
+  const today = todayKey();
+  const kilindi = state.kilinanVakitler[today] || {};
+  const sayi = FARZ_VAKITLER.filter(ad => kilindi[ad]).length;
+  if (sayi >= 5) {
+    showCelebrate('🌟', 'Mâşâallah!', 'Bugün 5 vakit namazını tamamladın.\nAllah kabul etsin.');
+  }
+}
+
+// ─── STREAK ──────────────────────────────────────
+function checkStreakUpdate() {
+  const today = todayKey();
+  if (state.lastStreakDate === today) return;
+  const yesterday = (() => {
+    const d = new Date(); d.setDate(d.getDate() - 1);
+    return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+  })();
+  if (state.lastStreakDate === yesterday) {
+    state.streak++;
+  } else if (state.lastStreakDate !== today) {
+    state.streak = 1;
+  }
+  state.lastStreakDate = today;
+  localStorage.setItem('streak', state.streak);
+  localStorage.setItem('lastStreakDate', state.lastStreakDate);
+  renderStreak();
+}
+
+function renderStreak() {
+  document.getElementById('streak-num').textContent = state.streak;
+}
+
+// ─── VİRD ────────────────────────────────────────
+function renderVirdTarih() {
+  const d = new Date();
+  const gun = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+  const ay = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  document.getElementById('vird-tarih').textContent =
+    `${gun[d.getDay()]}, ${d.getDate()} ${ay[d.getMonth()]}`;
+}
+
+function renderVirdPage() {
+  const today = todayKey();
+  const html = state.virdler.map((v, i) => {
+    if (v.tesbihat) {
+      const parcaHtml = v.parcalar.map((p, pi) => {
+        const key = today + '_' + pi;
+        const cur = (v.counts && v.counts[key]) || 0;
+        const done = cur >= p.hedef;
+        const pct = Math.min(100, Math.round(cur / p.hedef * 100));
+        return `<div class="tesbihat-row">
+          <div class="tesbihat-info">
+            <div class="tesbihat-name-row">
+              <span class="tesbihat-name">${p.ad}</span>
+              <span class="tesbihat-count ${done?'done':''}">${cur}/${p.hedef}</span>
+            </div>
+            <div class="tesbihat-progress"><div class="tesbihat-progress-fill ${done?'done':''}" style="width:${pct}%"></div></div>
+          </div>
+          <button class="tesbihat-plus ${done?'done':''}" onclick="tapTesbihat(${i},${pi})">${done?'✓':'+'}</button>
+        </div>`;
+      }).join('');
+      return `<div class="vird-card">
+        <div class="vird-card-top">
+          <div class="vird-name">${v.emoji} ${v.ad}</div>
+          <button class="vird-reset-btn" onclick="resetTesbihat(${i})">↺</button>
+        </div>
+        ${parcaHtml}
+      </div>`;
+    }
+    const current = (v.counts && v.counts[today]) || 0;
+    const pct = Math.min(100, Math.round(current / v.hedef * 100));
+    const isDone = current >= v.hedef;
+    return `<div class="vird-card ${isDone ? '' : 'active-vird'}">
+      <div class="vird-card-top">
+        <div>
+          <div class="vird-name">${v.emoji || '📿'} ${v.ad}</div>
+          <div class="vird-count-lbl">Hedef: ${v.hedef}</div>
+        </div>
+        <div class="vird-nums">
+          <div class="vird-current">${current}</div>
+          <div class="vird-target">/ ${v.hedef}</div>
+        </div>
+      </div>
+      <div class="vird-progress">
+        <div class="vird-progress-fill ${isDone ? 'done' : ''}" style="width:${pct}%"></div>
+      </div>
+      <div class="vird-actions">
+        <button class="vird-tap-btn ${isDone ? 'done-btn' : ''}" onclick="tapVird(${i})">
+          ${isDone ? '✓ Tamamlandı' : '+1'}
+        </button>
+        <button class="vird-reset-btn" onclick="resetVird(${i})" title="Sıfırla">↺</button>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('vird-list').innerHTML = html ||
+    `<div style="text-align:center;padding:40px;color:var(--text3)">
+      <div style="font-size:48px;margin-bottom:12px">📿</div>
+      <div style="font-size:16px">Henüz vird eklenmedi</div>
+      <div style="font-size:13px;margin-top:6px">+ butonuna dokun</div>
+    </div>`;
+}
+
+function tapTesbihat(i, pi) {
+  const today = todayKey();
+  const v = state.virdler[i];
+  const p = v.parcalar[pi];
+  const key = today + '_' + pi;
+  if (!v.counts) v.counts = {};
+  const cur = v.counts[key] || 0;
+  if (cur >= p.hedef) return;
+  v.counts[key] = cur + 1;
+  if (navigator.vibrate) navigator.vibrate(30);
+  playTikSesi();
+  const allDone = v.parcalar.every((pp, ppi) => (v.counts[today+'_'+ppi]||0) >= pp.hedef);
+  if (allDone) showCelebrate('🕌','Mâşâallah!','Namaz tesbihatını tamamladın.\nAllah kabul etsin.');
+  localStorage.setItem('virdler', JSON.stringify(state.virdler));
+  renderVirdPage();
+}
+
+function resetTesbihat(i) {
+  const today = todayKey();
+  const v = state.virdler[i];
+  v.parcalar.forEach((p, pi) => { if(v.counts) v.counts[today+'_'+pi] = 0; });
+  localStorage.setItem('virdler', JSON.stringify(state.virdler));
+  renderVirdPage();
+  showToast('Sıfırlandı');
+}
+
+function tapVird(i) {
+  const today = todayKey();
+  const v = state.virdler[i];
+  if (!v.counts) v.counts = {};
+  const current = (v.counts[today] || 0);
+  if (current >= v.hedef) return;
+  v.counts[today] = current + 1;
+  if (navigator.vibrate) navigator.vibrate(30);
+  playTikSesi();
+  if (v.counts[today] >= v.hedef) {
+    showCelebrate('✨', 'Mâşâallah!', `${v.ad} virdinizi tamamladınız!\nAllah kabul etsin.`);
+  }
+  localStorage.setItem('virdler', JSON.stringify(state.virdler));
+  renderVirdPage();
+}
+
+function resetVird(i) {
+  const today = todayKey();
+  const v = state.virdler[i];
+  if (!v.counts) return;
+  v.counts[today] = 0;
+  localStorage.setItem('virdler', JSON.stringify(state.virdler));
+  renderVirdPage();
+  showToast('Sayaç sıfırlandı');
+}
+
+function openVirdModal() {
+  secilenPreset = null;
+  document.getElementById('vird-input-name').value = '';
+  document.getElementById('vird-input-target').value = '';
+  document.getElementById('vird-input-target').disabled = false;
+  document.getElementById('target-wrap').style.opacity = '1';
+  const presetHtml = VİRD_PRESETS.map((p, i) =>
+    `<div class="preset-chip" onclick="selectPreset(${i}, this)">${p.emoji} ${p.ad}</div>`
+  ).join('');
+  document.getElementById('preset-list').innerHTML = presetHtml;
+  openModal('vird-modal');
+}
+
+function selectPreset(i, el) {
+  document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  secilenPreset = VİRD_PRESETS[i];
+  document.getElementById('vird-input-name').value = secilenPreset.ad;
+  if (secilenPreset.tesbihat) {
+    document.getElementById('vird-input-target').value = '';
+    document.getElementById('vird-input-target').disabled = true;
+    document.getElementById('target-wrap').style.opacity = '0.4';
+  } else {
+    document.getElementById('vird-input-target').value = secilenPreset.hedef;
+    document.getElementById('vird-input-target').disabled = false;
+    document.getElementById('target-wrap').style.opacity = '1';
+  }
+}
+
+function saveVird() {
+  const ad = document.getElementById('vird-input-name').value.trim();
+  if (!ad) { showToast('Lütfen bir isim girin'); return; }
+  if (secilenPreset && secilenPreset.tesbihat) {
+    state.virdler.push({ ad, emoji:'🕌', tesbihat:true, parcalar:[
+      { ad:'Sübhanallah',   hedef:33 },
+      { ad:'Elhamdülillah', hedef:33 },
+      { ad:'Allahuekber',   hedef:34 },
+    ], counts:{} });
+  } else {
+    const hedef = parseInt(document.getElementById('vird-input-target').value) || 33;
+    const emoji = secilenPreset ? secilenPreset.emoji : '📿';
+    state.virdler.push({ ad, hedef, emoji, counts: {} });
+  }
+  localStorage.setItem('virdler', JSON.stringify(state.virdler));
+  closeModal('vird-modal');
+  renderVirdPage();
+  showToast(`"${ad}" eklendi`);
+}
+
+// ─── TAKVİM ──────────────────────────────────────
+function renderTakvim() {
+  const d = new Date();
+  const aylar = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  document.getElementById('takvim-month').textContent = `${aylar[d.getMonth()]} ${d.getFullYear()}`;
+  document.getElementById('takvim-hicri').textContent = 'Hicri takvim hesaplanıyor...';
+
+  // Yılın geri kalanındaki özel günleri göster
+  const ayAdi = ['', 'Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+  const mevcutAy = d.getMonth() + 1;
+  const gunler = ÖZEL_GÜNLER
+    .filter(g => g.ay >= mevcutAy)
+    .sort((a, b) => a.ay !== b.ay ? a.ay - b.ay : a.gun - b.gun);
+
+  const html = gunler.map(g =>
+    `<div class="event-card" onclick="openEventDetail(${ÖZEL_GÜNLER.indexOf(g)})">
+      <div class="event-date">
+        <div class="event-day">${g.gun}</div>
+        <div class="event-month">${ayAdi[g.ay]}</div>
+      </div>
+      <div class="event-info">
+        <div class="event-name">${g.ikon} ${g.ad}</div>
+        <div class="event-desc">${g.aciklama.substring(0,80)}...</div>
+      </div>
+    </div>`
+  ).join('');
+  document.getElementById('events-list').innerHTML = html;
+}
+
+function openEventDetail(i) {
+  const d = ÖZEL_GÜNLER[i];
+  document.getElementById('special-modal-content').innerHTML =
+    `<div style="text-align:center;margin-bottom:16px;font-size:52px">${d.ikon}</div>
+     <div style="font-family:'Amiri',serif;font-size:24px;color:var(--gold2);margin-bottom:12px;text-align:center">${d.ad}</div>
+     <div style="font-size:15px;color:var(--text2);line-height:1.8">${d.aciklama}</div>`;
+  openModal('special-modal');
+}
+
+// ─── BAŞLAT ──────────────────────────────────────
+init();
+</script>
+</body>
+</html>
