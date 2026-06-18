@@ -17,19 +17,25 @@
   @import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
 
   :root {
-    --bg: #1a2944;
-    --bg2: #233452;
-    --bg3: #2e4163;
-    --gold: #c9a84c;
-    --gold2: #e8c97a;
-    --gold-dim: rgba(201,168,76,0.15);
-    --text: #e8e4d8;
-    --text2: #9fa8b4;
-    --text3: #6b7685;
-    --green: #4caf7d;
-    --green-dim: rgba(76,175,125,0.15);
-    --radius: 16px;
-    --radius-sm: 10px;
+    --bg: transparent;
+    --bg2: rgba(255,255,255,0.06);
+    --bg3: rgba(255,255,255,0.10);
+    --gold: #e0bd63;
+    --gold2: #f4d89a;
+    --gold-dim: rgba(224,189,99,0.16);
+    --text: #f3efe4;
+    --text2: #c3c0b8;
+    --text3: #8d96a3;
+    --green: #5cc78d;
+    --green-dim: rgba(92,199,141,0.16);
+    --radius: 18px;
+    --radius-sm: 12px;
+    /* yaşayan gökyüzü — evreye göre JS ile değişir */
+    --sky-top: #14102c;
+    --sky-bot: #0c1230;
+    --glow: rgba(224,189,99,0.30);
+    --glow-x: 78%;
+    --glow-y: 16%;
   }
 
   .light {
@@ -50,12 +56,47 @@
 
   body {
     font-family: 'Inter', sans-serif;
-    background: var(--bg);
+    background: var(--sky-bot);
     color: var(--text);
     min-height: 100vh;
     overflow-x: hidden;
-    transition: background 0.3s, color 0.3s;
+    transition: color 0.3s;
   }
+
+  /* ── Yaşayan gökyüzü katmanı ── */
+  #sky {
+    position: fixed; inset: 0; z-index: -2;
+    background:
+      radial-gradient(120% 90% at var(--glow-x) var(--glow-y), var(--glow) 0%, transparent 55%),
+      linear-gradient(165deg, var(--sky-top) 0%, var(--sky-bot) 70%);
+    transition: background 1.5s ease;
+  }
+  #sky::before { /* yumuşak nefes alan ışık */
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(60% 45% at var(--glow-x) var(--glow-y), var(--glow) 0%, transparent 60%);
+    opacity: 0.7; animation: skyBreath 9s ease-in-out infinite;
+  }
+  #stars {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    opacity: 0; transition: opacity 2s ease;
+  }
+  body.phase-night #stars { opacity: 1; }
+  .light #sky, .light #stars { display: none; }
+  body.light { background: var(--bg); }
+  @keyframes skyBreath {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50%      { opacity: 0.85; transform: scale(1.06); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #sky::before { animation: none; }
+  }
+
+  /* Gökyüzü evreleri */
+  body.phase-dawn      { --sky-top:#3a2747; --sky-bot:#1c1733; --glow:rgba(232,145,107,0.40); --glow-x:50%; --glow-y:14%; }
+  body.phase-day       { --sky-top:#163049; --sky-bot:#0e2031; --glow:rgba(224,189,99,0.34); --glow-x:80%; --glow-y:12%; }
+  body.phase-afternoon { --sky-top:#1e2c46; --sky-bot:#141d33; --glow:rgba(223,160,90,0.34); --glow-x:84%; --glow-y:24%; }
+  body.phase-sunset    { --sky-top:#3d1f2e; --sky-bot:#1f1430; --glow:rgba(216,95,78,0.42);  --glow-x:24%; --glow-y:80%; }
+  body.phase-night     { --sky-top:#11173a; --sky-bot:#080c20; --glow:rgba(201,168,76,0.26); --glow-x:78%; --glow-y:14%; }
 
   /* ─── TOP BAR ─── */
   .topbar {
@@ -100,6 +141,7 @@
   /* ─── HADİS KARTI ─── */
   .hadis-card {
     background: var(--bg2);
+    -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
     border: 1px solid var(--gold-dim);
     border-radius: var(--radius);
     padding: 16px;
@@ -152,19 +194,28 @@
   /* ─── BÜYÜK SAYAÇ ─── */
   .next-prayer-card {
     background: var(--bg2);
-    border-radius: var(--radius);
-    padding: 24px 20px;
+    -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 24px;
+    padding: 26px 20px 24px;
     text-align: center;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
   }
   .next-prayer-card::after {
     content: '';
     position: absolute;
-    top: -40px; right: -40px;
-    width: 140px; height: 140px;
-    background: radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%);
+    top: -60px; right: -50px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, var(--glow) 0%, transparent 70%);
     pointer-events: none;
+  }
+  .sky-greeting {
+    font-family: 'Amiri', serif;
+    font-size: 17px; font-style: italic;
+    color: var(--gold2); margin-bottom: 14px;
+    opacity: 0.95; position: relative; z-index: 1;
   }
   .next-label {
     font-size: 11px; font-weight: 600;
@@ -173,8 +224,9 @@
   }
   .next-name {
     font-family: 'Amiri', serif;
-    font-size: 36px; color: var(--gold2);
+    font-size: 40px; color: var(--gold2);
     margin-bottom: 2px;
+    text-shadow: 0 2px 20px var(--glow);
   }
   .next-time {
     font-size: 15px; color: var(--text2);
@@ -217,8 +269,10 @@
   /* ─── STREAK ─── */
   .streak-bar {
     display: flex; align-items: center; justify-content: space-between;
-    background: var(--bg2); border-radius: var(--radius-sm);
-    padding: 12px 16px;
+    background: var(--bg2);
+    -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: var(--radius); padding: 14px 16px;
   }
   .streak-left { display: flex; align-items: center; gap: 10px; }
   .streak-icon { font-size: 24px; }
@@ -230,6 +284,8 @@
   /* ─── 5 VAKİT LİSTESİ ─── */
   .vakitler {
     background: var(--bg2);
+    -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.07);
     border-radius: var(--radius);
     overflow: hidden;
   }
@@ -347,12 +403,14 @@
   /* ─── BOTTOM NAV ─── */
   .bottom-nav {
     position: fixed; bottom: 0; left: 0; right: 0;
-    background: var(--bg2);
-    border-top: 1px solid var(--bg3);
+    background: rgba(12,18,40,0.72);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255,255,255,0.08);
     display: flex;
     padding-bottom: env(safe-area-inset-bottom, 8px);
     z-index: 100;
   }
+  .light .bottom-nav { background: rgba(245,242,235,0.82); }
   .nav-item {
     flex: 1; display: flex; flex-direction: column;
     align-items: center; justify-content: center;
@@ -692,6 +750,8 @@
 </style>
 </head>
 <body>
+<div id="sky"></div>
+<canvas id="stars"></canvas>
 
 <!-- TOP BAR -->
 <div class="topbar">
@@ -731,6 +791,7 @@
 
     <!-- Büyük Sayaç -->
     <div class="next-prayer-card">
+      <div class="sky-greeting" id="sky-greeting">Bismillâh</div>
       <div class="next-label">Sıradaki Namaz</div>
       <div class="next-name" id="next-name">—</div>
       <div class="next-time" id="next-time"></div>
@@ -1040,6 +1101,85 @@
 <!-- JAVASCRIPT -->
 <!-- ═══════════════════════════════════ -->
 <script>
+// ─── YAŞAYAN GÖKYÜZÜ ─────────────────────────────
+const GOK_EVRELERI = {
+  dawn:      { sinif:'phase-dawn',      selam:'Hayırlı sabahlar' },
+  day:       { sinif:'phase-day',       selam:'Hayırlı günler' },
+  afternoon: { sinif:'phase-afternoon', selam:'Hayırlı ikindiler' },
+  sunset:    { sinif:'phase-sunset',    selam:'Hayırlı akşamlar' },
+  night:     { sinif:'phase-night',     selam:'Hayırlı geceler' },
+};
+let _sonEvre = '';
+
+function gokEvresiBelirle() {
+  // Vakitler yüklüyse onlara göre, değilse sadate göre evre seç.
+  const now = new Date();
+  const dk = now.getHours() * 60 + now.getMinutes();
+  let v = null;
+  try { if (state && state.vakitler) v = state.vakitler; } catch (e) { v = null; }
+  const m = (s) => { const [h, mm] = s.substring(0,5).split(':').map(Number); return h*60+mm; };
+  if (v && v['Sabah'] && v['Güneş'] && v['Öğle'] && v['İkindi'] && v['Akşam'] && v['Yatsı']) {
+    if (dk >= m(v['Sabah']) && dk < m(v['Güneş']))  return 'dawn';
+    if (dk >= m(v['Güneş']) && dk < m(v['İkindi'])) return 'day';
+    if (dk >= m(v['İkindi']) && dk < m(v['Akşam'])) return 'afternoon';
+    if (dk >= m(v['Akşam']) && dk < m(v['Yatsı']))  return 'sunset';
+    return 'night';
+  }
+  if (dk >= 300 && dk < 480)  return 'dawn';
+  if (dk >= 480 && dk < 900)  return 'day';
+  if (dk >= 900 && dk < 1140) return 'afternoon';
+  if (dk >= 1140 && dk < 1260) return 'sunset';
+  return 'night';
+}
+
+function gokyuzuGuncelle() {
+  const evre = gokEvresiBelirle();
+  if (evre === _sonEvre) return;
+  _sonEvre = evre;
+  const cfg = GOK_EVRELERI[evre];
+  document.body.classList.remove('phase-dawn','phase-day','phase-afternoon','phase-sunset','phase-night');
+  document.body.classList.add(cfg.sinif);
+  const g = document.getElementById('sky-greeting');
+  if (g) g.textContent = cfg.selam;
+  if (evre === 'night') yildizlariCiz(); else temizleYildiz();
+}
+
+let _yildizCtx = null;
+function yildizlariCiz() {
+  const c = document.getElementById('stars');
+  if (!c) return;
+  c.width = window.innerWidth; c.height = window.innerHeight;
+  const ctx = c.getContext('2d');
+  _yildizCtx = ctx;
+  const n = Math.min(70, Math.floor(c.width * c.height / 14000));
+  const yildizlar = Array.from({length:n}, () => ({
+    x: Math.random()*c.width, y: Math.random()*c.height*0.7,
+    r: Math.random()*1.3+0.3, faz: Math.random()*Math.PI*2,
+    hiz: Math.random()*0.018+0.006
+  }));
+  const azalt = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function ciz() {
+    if (_sonEvre !== 'night') return;
+    ctx.clearRect(0,0,c.width,c.height);
+    for (const s of yildizlar) {
+      s.faz += s.hiz;
+      const parlak = azalt ? 0.7 : (0.45 + 0.45*Math.sin(s.faz));
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(244,216,154,${parlak})`;
+      ctx.fill();
+    }
+    if (!azalt) requestAnimationFrame(ciz);
+  }
+  ciz();
+}
+function temizleYildiz() {
+  if (_yildizCtx) _yildizCtx.clearRect(0,0,window.innerWidth,window.innerHeight);
+}
+window.addEventListener('resize', () => { if (_sonEvre === 'night') yildizlariCiz(); });
+// hemen ilk evreyi uygula (state yüklenmeden saate göre)
+gokyuzuGuncelle();
+
 // ─── PWA: service worker kaydı (kurulabilirlik + çevrimdışı) ───
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -1092,6 +1232,27 @@ const VİRD_PRESETS = [
   { ad:"Mülk Sûresi (Gece)", hedef:1,   emoji:"🌙" },
 ];
 
+// Vird listesini yükle; hiç başlatılmamışsa (ilk açılış) temel virdleri bir kez ekler.
+// Kullanıcı tüm virdleri silerse tekrar tohumlamaz (boş [] ile null'ı ayırt eder).
+function loadVirdler() {
+  const raw = localStorage.getItem('virdler');
+  if (raw !== null) {
+    try { return JSON.parse(raw); } catch (e) { return []; }
+  }
+  const varsayilan = [
+    { ad:'Namaz Tesbihatı', emoji:'🕌', tesbihat:true, parcalar:[
+      { ad:'Sübhanallah',   hedef:33 },
+      { ad:'Elhamdülillah', hedef:33 },
+      { ad:'Allahuekber',   hedef:34 },
+    ], counts:{} },
+    { ad:'100 İstiğfar', hedef:100, emoji:'💧', counts:{} },
+    { ad:'100 Salavat',  hedef:100, emoji:'✨', counts:{} },
+    { ad:'100 Tevhid',   hedef:100, emoji:'🌙', counts:{} },
+  ];
+  localStorage.setItem('virdler', JSON.stringify(varsayilan));
+  return varsayilan;
+}
+
 // ─── DURUM ──────────────────────────────────────
 let state = {
   vakitler: null,
@@ -1102,7 +1263,7 @@ let state = {
   streak: parseInt(localStorage.getItem('streak') || '0'),
   lastStreakDate: localStorage.getItem('lastStreakDate') || '',
   kilinanVakitler: JSON.parse(localStorage.getItem('kilinanVakitler') || '{}'),
-  virdler: JSON.parse(localStorage.getItem('virdler') || '[]'),
+  virdler: loadVirdler(),
   sesAyari: localStorage.getItem('sesAyari') || 'klasik',
   tiklamaSesi: localStorage.getItem('tiklamaSesi') !== 'off',
 };
@@ -1124,6 +1285,8 @@ function toggleTheme() {
   state.darkMode = !state.darkMode;
   document.body.classList.toggle('light', !state.darkMode);
   document.querySelector('.icon-btn').textContent = state.darkMode ? '☀' : '🌙';
+  if (!state.darkMode) { temizleYildiz(); }
+  else { _sonEvre = ''; gokyuzuGuncelle(); }
 }
 
 // ─── TOAST ───────────────────────────────────────
@@ -1348,6 +1511,7 @@ function processVakitler(timings) {
   renderVakitler();
   startCountdown();
   loadHadis();
+  _sonEvre = ''; gokyuzuGuncelle();
 }
 
 // Sadece bu 5 vakit farz namazdır; Güneş bilgi amaçlıdır, "kıldım" ve streak'e dahil değildir.
@@ -1421,6 +1585,7 @@ function startCountdown() {
 
 function updateCountdown() {
   checkVakitGirisi();
+  gokyuzuGuncelle();
   const next = getNextVakit();
   if (!next) return;
   document.getElementById('next-name').textContent = next.ad;
