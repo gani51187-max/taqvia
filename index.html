@@ -206,6 +206,13 @@
     color: var(--green);
     opacity: 0.6;
   }
+  .kildi-btn.pasif {
+    background: var(--bg3);
+    border-color: var(--text3);
+    color: var(--text3);
+    cursor: default;
+  }
+  .kildi-btn.pasif:active { transform: none; background: var(--bg3); }
 
   /* ─── STREAK ─── */
   .streak-bar {
@@ -282,6 +289,14 @@
     color: white;
   }
   .vakit-check:active { transform: scale(0.9); }
+  .vakit-check.kilitli {
+    opacity: 0.3; cursor: default;
+    border-style: dashed;
+  }
+  .vakit-check.done.kilitli {
+    opacity: 0.5; border-style: solid;
+  }
+  .vakit-check.kilitli:active { transform: none; }
   .vakit-alarm {
     width: 32px; height: 32px; margin-right: 8px;
     display: flex; align-items: center; justify-content: center;
@@ -1348,12 +1363,22 @@ function renderVakitler() {
     const isActive = i === activeIdx;
     const isFarz = FARZ_VAKITLER.includes(ad);
     const isDone = isFarz && kilindi[ad];
+    const markable = isFarz && (i === getCurrentVakitIndex());
     const altEtiket = ad === 'Sabah'
       ? '<span class="vakit-name-sub">İmsak · sahur sonu / oruç başlangıcı</span>'
       : (ad === 'Güneş' ? '<span class="vakit-name-sub">Sabah namazının çıkışı · namaz kılınmaz</span>' : '');
-    const sagTaraf = isFarz
-      ? `<div class="vakit-check ${isDone ? 'done' : ''}" onclick="kildimVakit('${ad}')">${isDone ? '✓' : ''}</div>`
-      : `<div class="vakit-bilgi-etiket" title="Namaz vakti değil, bilgi amaçlı">ⓘ</div>`;
+    let sagTaraf;
+    if (!isFarz) {
+      sagTaraf = `<div class="vakit-bilgi-etiket" title="Namaz vakti değil, bilgi amaçlı">ⓘ</div>`;
+    } else if (isDone) {
+      sagTaraf = markable
+        ? `<div class="vakit-check done" onclick="kildimVakit('${ad}')">✓</div>`
+        : `<div class="vakit-check done kilitli" title="Vakti geçti, değiştirilemez">✓</div>`;
+    } else if (markable) {
+      sagTaraf = `<div class="vakit-check" onclick="kildimVakit('${ad}')"></div>`;
+    } else {
+      sagTaraf = `<div class="vakit-check kilitli" title="Sadece kendi vakti içinde işaretlenebilir"></div>`;
+    }
     return `<div class="vakit-row ${isActive ? 'active' : ''} ${isDone ? 'kilindi' : ''} ${isFarz ? '' : 'bilgi'}">
       <div class="vakit-icon">${VAKİT_İKON[i]}</div>
       <div class="vakit-name">${ad}${altEtiket}</div>
@@ -1416,17 +1441,22 @@ function updateCountdown() {
   document.getElementById('countdown').innerHTML =
     `<span>${fmt(hh)}</span>:${fmt(mm)}:${fmt(ss)}`;
 
-  // Kilidimi güncelle (bir sonraki farz namaza göre)
+  // Ana buton: yalnızca şu an vakti aktif olan farz namaza göre
   const today = todayKey();
   const kilindi = state.kilinanVakitler[today] || {};
   const mainBtn = document.getElementById('kildi-main-btn');
-  const farz = getNextFarzVakit();
-  if (farz && kilindi[farz.ad]) {
-    mainBtn.classList.add('done');
-    mainBtn.innerHTML = `<span>✓</span> ${farz.ad} Kılındı`;
-  } else {
+  const aktif = getAktifFarzVakit();
+  if (!aktif) {
     mainBtn.classList.remove('done');
-    mainBtn.innerHTML = `<span>✓</span> ${farz ? farz.ad + ' Namazını' : 'Namazı'} Kıldım`;
+    mainBtn.classList.add('pasif');
+    mainBtn.innerHTML = '<span>🕒</span> Şu an aktif namaz yok';
+  } else if (kilindi[aktif.ad]) {
+    mainBtn.classList.remove('pasif');
+    mainBtn.classList.add('done');
+    mainBtn.innerHTML = `<span>✓</span> ${aktif.ad} Kılındı`;
+  } else {
+    mainBtn.classList.remove('done', 'pasif');
+    mainBtn.innerHTML = `<span>✓</span> ${aktif.ad} Namazını Kıldım`;
   }
 }
 
@@ -1451,14 +1481,35 @@ function getNextFarzVakit() {
   return null;
 }
 
+// Şu an vakti AKTİF olan farz namaz (vakti girmiş, sonraki vakit henüz girmemiş).
+// İçinde bulunduğumuz slot Güneş ise (sabah namazı çıkmış, öğle girmemiş) null döner.
+function getAktifFarzVakit() {
+  if (!state.vakitler) return null;
+  const entries = Object.entries(state.vakitler);
+  const cur = getCurrentVakitIndex();
+  const [ad, saat] = entries[cur];
+  if (FARZ_VAKITLER.includes(ad)) return { ad, saat, idx: cur };
+  return null;
+}
+
+// Bir namaz yalnızca kendi vakti aktifken işaretlenebilir.
+function vakitIsaretlenebilir(ad) {
+  const aktif = getAktifFarzVakit();
+  return !!aktif && aktif.ad === ad;
+}
+
 function kildimMain() {
-  const next = getNextFarzVakit();
-  if (!next) return;
-  kildimVakit(next.ad);
+  const aktif = getAktifFarzVakit();
+  if (!aktif) { showToast('Şu an vakti aktif bir namaz yok'); return; }
+  kildimVakit(aktif.ad);
 }
 
 function kildimVakit(ad) {
   if (!FARZ_VAKITLER.includes(ad)) return; // Güneş gibi bilgi vakitleri işaretlenemez
+  if (!vakitIsaretlenebilir(ad)) {         // vakti geçmiş veya henüz girmemişse işaretlenemez
+    showToast(`${ad} sadece kendi vakti içinde işaretlenebilir`);
+    return;
+  }
   const today = todayKey();
   if (!state.kilinanVakitler[today]) state.kilinanVakitler[today] = {};
   if (state.kilinanVakitler[today][ad]) {
