@@ -1799,7 +1799,7 @@ function updateCountdown() {
   if (!aktif) {
     mainBtn.classList.remove('done');
     mainBtn.classList.add('pasif');
-    mainBtn.innerHTML = '<span>🕒</span> Şu an aktif namaz yok';
+    mainBtn.innerHTML = `<span>🕌</span> ${next.ad} vakti yaklaşıyor`;
   } else if (kilindi[aktif.ad]) {
     mainBtn.classList.remove('pasif');
     mainBtn.classList.add('done');
@@ -2257,14 +2257,119 @@ function cumaKartiGuncelle() {
     kart.style.display = 'none';
   }
 }
-function cumaPaylas() {
+async function cumaPaylas() {
   const soz = document.getElementById('cuma-ayet').textContent;
-  const metin = `Hayırlı Cumalar 🕌\n\n${soz}\n\n— Taqvia`;
-  if (navigator.share) {
-    navigator.share({ title: 'Hayırlı Cumalar', text: metin }).catch(() => {});
-  } else if (navigator.clipboard) {
-    navigator.clipboard.writeText(metin).then(() => showToast('Kopyalandı, paylaşabilirsin')).catch(() => {});
+  await gorselPaylas('Hayırlı Cumalar', soz, 'cuma');
+}
+
+// ─── PAYLAŞILABİLİR GÖRSEL (WhatsApp durumu, 1080×1920) ──
+async function gorselPaylas(baslik, govde, tip) {
+  showToast('Görsel hazırlanıyor…');
+  try { await document.fonts.load('700 64px "Amiri"'); await document.fonts.load('italic 52px "Amiri"'); } catch(e) {}
+  const W = 1080, H = 1920;
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const x = c.getContext('2d');
+
+  // Arka plan: derin lacivert → indigo + üstte altın ışık
+  const bg = x.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#1b1533');
+  bg.addColorStop(0.55, '#121a3a');
+  bg.addColorStop(1, '#0a1024');
+  x.fillStyle = bg; x.fillRect(0, 0, W, H);
+  const glow = x.createRadialGradient(W*0.5, H*0.30, 40, W*0.5, H*0.30, W*0.85);
+  glow.addColorStop(0, 'rgba(224,189,99,0.28)');
+  glow.addColorStop(1, 'rgba(224,189,99,0)');
+  x.fillStyle = glow; x.fillRect(0, 0, W, H);
+
+  // Yıldızlar (hafif)
+  x.fillStyle = 'rgba(244,216,154,0.5)';
+  for (let i = 0; i < 60; i++) {
+    const sx = Math.random()*W, sy = Math.random()*H*0.55, r = Math.random()*2+0.5;
+    x.globalAlpha = Math.random()*0.6+0.2;
+    x.beginPath(); x.arc(sx, sy, r, 0, Math.PI*2); x.fill();
   }
+  x.globalAlpha = 1;
+
+  // İnce altın çerçeve
+  x.strokeStyle = 'rgba(224,189,99,0.55)'; x.lineWidth = 3;
+  x.strokeRect(54, 54, W-108, H-108);
+
+  // Hilal + yıldız motifi (üst)
+  x.save();
+  x.translate(W/2, 360);
+  x.fillStyle = '#e0bd63';
+  x.beginPath(); x.arc(0, 0, 70, 0, Math.PI*2); x.fill();
+  x.fillStyle = '#121a3a';
+  x.beginPath(); x.arc(24, 0, 60, 0, Math.PI*2); x.fill();
+  x.fillStyle = '#f4d89a';
+  yildizCizCanvas(x, 78, -42, 22);
+  x.restore();
+
+  // Başlık (Amiri)
+  x.textAlign = 'center'; x.fillStyle = '#f4d89a';
+  x.font = '700 78px "Amiri", serif';
+  x.fillText(baslik, W/2, 600);
+
+  // Ayraç
+  x.strokeStyle = 'rgba(224,189,99,0.5)'; x.lineWidth = 2;
+  x.beginPath(); x.moveTo(W/2-90, 660); x.lineTo(W/2+90, 660); x.stroke();
+
+  // Gövde sözü (Amiri italik, satır kaydırmalı, dikey ortalı)
+  x.fillStyle = '#f3efe4';
+  x.font = 'italic 58px "Amiri", serif';
+  const satirlar = satirBol(x, govde, W - 260);
+  const satirYuk = 86;
+  const blokYuk = satirlar.length * satirYuk;
+  let y = H/2 - blokYuk/2 + 60;
+  for (const s of satirlar) { x.fillText(s, W/2, y); y += satirYuk; }
+
+  // Alt marka
+  x.fillStyle = '#e0bd63';
+  x.font = '700 46px "Amiri", serif';
+  x.fillText('تقوى · Taqvia', W/2, H - 150);
+  x.fillStyle = 'rgba(255,255,255,0.45)';
+  x.font = '400 30px Inter, sans-serif';
+  x.fillText('Namaz vakitleri · Vird · Hatırlatıcı', W/2, H - 100);
+
+  // Paylaş / indir
+  c.toBlob(async (blob) => {
+    if (!blob) { showToast('Görsel oluşturulamadı'); return; }
+    const dosya = new File([blob], 'taqvia-cuma.png', { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [dosya] })) {
+      try { await navigator.share({ files: [dosya], title: baslik }); }
+      catch (e) { /* kullanıcı iptal etti */ }
+    } else {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'taqvia-cuma.png'; a.click();
+      URL.revokeObjectURL(url);
+      showToast('Görsel indirildi, WhatsApp durumuna ekleyebilirsin');
+    }
+  }, 'image/png');
+}
+
+function satirBol(ctx, metin, maxGen) {
+  const kelimeler = metin.split(' ');
+  const satirlar = []; let satir = '';
+  for (const k of kelimeler) {
+    const deneme = satir ? satir + ' ' + k : k;
+    if (ctx.measureText(deneme).width > maxGen && satir) { satirlar.push(satir); satir = k; }
+    else satir = deneme;
+  }
+  if (satir) satirlar.push(satir);
+  return satirlar;
+}
+
+function yildizCizCanvas(ctx, cx, cy, r) {
+  ctx.beginPath();
+  for (let i = 0; i < 10; i++) {
+    const a = -Math.PI/2 + i*Math.PI/5;
+    const rr = i % 2 === 0 ? r : r*0.45;
+    const px = cx + rr*Math.cos(a), py = cy + rr*Math.sin(a);
+    i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+  }
+  ctx.closePath(); ctx.fill();
 }
 
 // ─── GÜNÜN SÖZÜNÜ PAYLAŞ ─────────────────────────
