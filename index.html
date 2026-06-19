@@ -2220,26 +2220,46 @@ function kazaAzalt(ad) {
 function openKazaModal() { renderKaza(); openModal('kaza-modal'); }
 
 // ─── CUMA KARTI ──────────────────────────────────
-const CUMA_AYETLERI = [
-  '"Ey iman edenler! Cuma günü namaz için çağrı yapıldığında, Allah\'ı anmaya koşun." (Cuma, 9)',
-  '"Kim Cuma günü Kehf Sûresi\'ni okursa, iki Cuma arası nurla aydınlanır." (Hâkim)',
-  '"Günlerin en hayırlısı Cuma günüdür." (Müslim)',
-  '"Cuma günü bana çokça salavat getirin." (Ebû Dâvûd)',
+// Cuma sözleri — düşündüren, merak uyandıran; çoğu evrensel ahlak/kişisel gelişim
+// üzerine özgün veya atasözü, birkaçı kamuya mâl olmuş klasiklerden (doğru atıflı).
+const CUMA_SOZLERI = [
+  'İnsan, kimse görmezken nasıl davrandığıysa odur.',
+  'Bir ağacı dikmek için en iyi zaman yirmi yıl önceydi; ikincisi bugündür.',
+  'Ya olduğun gibi görün, ya göründüğün gibi ol. — Mevlânâ',
+  'Bir insanın değeri, kendisine hiçbir faydası dokunmayacak kişilere nasıl davrandığıyla ölçülür.',
+  'Affetmek geçmişi değiştirmez; ama geleceğini özgür bırakır.',
+  'Sabır acıyı küçültmez, seni büyütür.',
+  'Vaktini nasıl geçirdiğin, aslında hayatını nasıl geçirdiğindir.',
+  'Tevazu, kendini küçük görmek değil; kendini daha az düşünmektir.',
+  'Nice insanlar gördüm üzerinde elbisesi yok, nice elbiseler gördüm içinde insan yok. — Mevlânâ',
+  'Kendini düzeltmekle uğraşan, başkasını yargılamaya vakit bulamaz.',
+  'İyilik, karşılık beklenmeden yapıldığında iyiliktir.',
+  'Sevelim, sevilelim; bu dünya kimseye kalmaz. — Yunus Emre',
+  'En zor zaferi, kendi nefsine karşı kazanırsın.',
+  'Söz gümüşse, sükût altındır.',
+  'Bugün ektiğin tohum, yarın altında dinleneceğin gölgedir.',
+  'Kendine dürüst olmadan, kimseye dürüst olamazsın.',
+  'Dün dünde kaldı cancağızım, bugün yeni şeyler söylemek lazım. — Mevlânâ',
+  'İnsanları zekâlarıyla değil, nezaketleriyle hatırlarız.',
+  'Şükret ki, sahip olduklarının kıymetini kaybetmeden bilesin.',
+  'Bir şeyi gerçekten istiyorsan yol, istemiyorsan mazeret ararsın.',
+  'Büyük ahlak, kimseye gösterilmeyen küçük dürüstlüklerde saklıdır.',
+  'Damlaya damlaya göl olur; yeter ki ilk damla düşmekten korkma.',
 ];
 function cumaKartiGuncelle() {
   const kart = document.getElementById('cuma-card');
   if (!kart) return;
   if (new Date().getDay() === 5) { // 5 = Cuma
-    const i = gunSirasi() % CUMA_AYETLERI.length;
-    document.getElementById('cuma-ayet').textContent = CUMA_AYETLERI[i];
+    const i = gunSirasi() % CUMA_SOZLERI.length;
+    document.getElementById('cuma-ayet').textContent = CUMA_SOZLERI[i];
     kart.style.display = 'block';
   } else {
     kart.style.display = 'none';
   }
 }
 function cumaPaylas() {
-  const ayet = document.getElementById('cuma-ayet').textContent;
-  const metin = `Hayırlı Cumalar 🕌\n\n${ayet}\n\n— Taqvia`;
+  const soz = document.getElementById('cuma-ayet').textContent;
+  const metin = `Hayırlı Cumalar 🕌\n\n${soz}\n\n— Taqvia`;
   if (navigator.share) {
     navigator.share({ title: 'Hayırlı Cumalar', text: metin }).catch(() => {});
   } else if (navigator.clipboard) {
