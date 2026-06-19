@@ -722,10 +722,15 @@
     from { transform: translateY(100%); }
     to { transform: translateY(0); }
   }
+  body.modal-acik { overflow: hidden; }
   .modal-handle {
-    width: 40px; height: 4px;
-    background: var(--bg3); border-radius: 2px;
-    margin: 0 auto 20px;
+    width: 44px; height: 5px;
+    background: var(--bg3); border-radius: 3px;
+    margin: 0 auto 18px;
+    cursor: pointer;
+    padding: 10px 30px; /* dokunma alanını büyüt */
+    background-clip: content-box;
+    box-sizing: content-box;
   }
   .modal-title {
     font-size: 17px; font-weight: 600;
@@ -1088,6 +1093,13 @@
   </div>
 
   <div class="ayarlar-section">
+    <div class="ayar-row" id="ayar-kur" onclick="anaEkranaEkle()">
+      <div class="ayar-left">
+        <div class="ayar-name">📲 Ana Ekrana Ekle</div>
+        <div class="ayar-val">Uygulama gibi tek dokunuşla aç</div>
+      </div>
+      <div style="color:var(--text3); font-size:18px">›</div>
+    </div>
     <div class="ayar-row" onclick="uygulamayiPaylas()">
       <div class="ayar-left">
         <div class="ayar-name">📤 Uygulamayı Paylaş</div>
@@ -1537,8 +1549,21 @@ function showCelebrate(emoji, title, sub) {
 }
 
 // ─── MODAL ───────────────────────────────────────
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  if (!document.querySelector('.modal-overlay.open')) document.body.classList.remove('modal-acik');
+}
+function openModal(id)  {
+  document.getElementById(id).classList.add('open');
+  document.body.classList.add('modal-acik');
+}
+// Üstteki tutturma çubuğuna dokununca o modalı kapat (kolay kapanış)
+document.addEventListener('click', (e) => {
+  if (e.target.classList && e.target.classList.contains('modal-handle')) {
+    const ov = e.target.closest('.modal-overlay');
+    if (ov) closeModal(ov.id);
+  }
+});
 function openVirdInfoModal() { openModal('vird-info-modal'); }
 
 // ─── HADİS ───────────────────────────────────────
@@ -1608,6 +1633,47 @@ function openSpecialDay() {
   openModal('special-modal');
 }
 
+// ─── ANA EKRANA EKLE (PWA kurulum) ───────────────
+let _kurulumIstemi = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  _kurulumIstemi = e;
+});
+window.addEventListener('appinstalled', () => {
+  _kurulumIstemi = null;
+  showToast('Uygulama ana ekrana eklendi 👍');
+});
+function kuruluMu() {
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+async function anaEkranaEkle() {
+  if (kuruluMu()) { showToast('Uygulama zaten ana ekranında 👍'); return; }
+  if (_kurulumIstemi) {
+    _kurulumIstemi.prompt();
+    try { await _kurulumIstemi.userChoice; } catch (e) {}
+    _kurulumIstemi = null;
+    return;
+  }
+  // iOS Safari veya istemi desteklemeyen tarayıcı: elle talimat göster
+  const iOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const adim = iOS
+    ? 'Safari\'de alttaki <b>Paylaş</b> (⬆️) simgesine dokun → <b>"Ana Ekrana Ekle"</b>yi seç.'
+    : 'Tarayıcı menüsünü (⋮) aç → <b>"Ana ekrana ekle"</b> / <b>"Uygulamayı yükle"</b>yi seç.';
+  document.getElementById('special-modal-content').innerHTML =
+    `<div style="text-align:center;margin-bottom:14px;font-size:48px">📲</div>
+     <div style="font-family:'Amiri',serif;font-size:22px;color:var(--gold2);margin-bottom:12px;text-align:center">Ana Ekrana Ekle</div>
+     <div style="font-size:15px;color:var(--text2);line-height:1.8">${adim}</div>
+     <div style="font-size:13px;color:var(--text3);line-height:1.7;margin-top:12px">Böylece Taqvia normal bir uygulama gibi açılır, kayıtların korunur.</div>`;
+  openModal('special-modal');
+}
+
+function gizleKurRow() {
+  if (kuruluMu()) {
+    const r = document.getElementById('ayar-kur');
+    if (r) r.style.display = 'none';
+  }
+}
+
 // ─── KONUM & NAMAZ VAKİTLERİ ─────────────────────
 function uygulamayiPaylas() {
   const url = window.location.href;
@@ -1633,6 +1699,7 @@ function init() {
   renderSesAyarVal();
   renderTiklamaSesiToggle();
   renderBuyukYazi();
+  gizleKurRow();
 
   if (state.manuelSehir) {
     fetchVakitlerByCity(state.manuelSehir);
@@ -1782,9 +1849,10 @@ function renderVakitler() {
     const isFarz = FARZ_VAKITLER.includes(ad);
     const isDone = isFarz && kilindi[ad];
     const markable = isFarz && (i === getCurrentVakitIndex());
-    const altEtiket = ad === 'Sabah'
-      ? '<span class="vakit-name-sub">İmsak · sahur sonu / oruç başlangıcı</span>'
-      : (ad === 'Güneş' ? '<span class="vakit-name-sub">Sabah namazının çıkışı · namaz kılınmaz</span>' : '');
+    const gosterimAd = ad === 'Sabah' ? 'İmsak' : ad;
+    const altEtiket = ad === 'Güneş'
+      ? '<span class="vakit-name-sub">Sabah namazının çıkışı · namaz kılınmaz</span>'
+      : '';
     let sagTaraf;
     if (!isFarz) {
       sagTaraf = `<div class="vakit-bilgi-etiket" title="Namaz vakti değil, bilgi amaçlı">ⓘ</div>`;
@@ -1799,7 +1867,7 @@ function renderVakitler() {
     }
     return `<div class="vakit-row ${isActive ? 'active' : ''} ${isDone ? 'kilindi' : ''} ${isFarz ? '' : 'bilgi'}">
       <div class="vakit-icon">${VAKİT_İKON[i]}</div>
-      <div class="vakit-name">${ad}${altEtiket}</div>
+      <div class="vakit-name">${gosterimAd}${altEtiket}</div>
       <div class="vakit-saat">${saat.substring(0,5)}</div>
       <div class="vakit-alarm" onclick="kurAlarm('${ad}','${saat.substring(0,5)}')" title="Alarm kur">🔔</div>
       ${sagTaraf}
