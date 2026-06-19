@@ -91,6 +91,42 @@
     #sky::before { animation: none; }
   }
 
+  /* ── Büyük Yazı (yaşlı dostu) ── */
+  body.buyuk-yazi .sky-greeting { font-size: 20px; }
+  body.buyuk-yazi .next-label { font-size: 13px; }
+  body.buyuk-yazi .next-name { font-size: 48px; }
+  body.buyuk-yazi .next-time { font-size: 22px; }
+  body.buyuk-yazi .countdown { font-size: 60px; }
+  body.buyuk-yazi .kildi-btn { font-size: 18px; padding: 13px 30px; }
+  body.buyuk-yazi .vakit-name { font-size: 18px; }
+  body.buyuk-yazi .vakit-name-sub { font-size: 13px; }
+  body.buyuk-yazi .vakit-saat { font-size: 18px; }
+  body.buyuk-yazi .vakitler-header { font-size: 14px; }
+  body.buyuk-yazi .hadis-text { font-size: 18px; }
+  body.buyuk-yazi .hadis-label { font-size: 13px; }
+  body.buyuk-yazi .hadis-source { font-size: 14px; }
+  body.buyuk-yazi .streak-num { font-size: 26px; }
+  body.buyuk-yazi .streak-lbl,
+  body.buyuk-yazi .streak-right { font-size: 14px; }
+  body.buyuk-yazi .kaza-card-title,
+  body.buyuk-yazi .kaza-row-name { font-size: 18px; }
+  body.buyuk-yazi .kaza-card-sub { font-size: 14px; }
+  body.buyuk-yazi .kaza-count { font-size: 22px; }
+  body.buyuk-yazi .vird-name { font-size: 18px; }
+  body.buyuk-yazi .vird-current { font-size: 32px; }
+  body.buyuk-yazi .tesbihat-name,
+  body.buyuk-yazi .tesbihat-count { font-size: 16px; }
+  body.buyuk-yazi .vird-tap-btn { font-size: 18px; }
+  body.buyuk-yazi .ayar-name { font-size: 17px; }
+  body.buyuk-yazi .ayar-val { font-size: 14px; }
+  body.buyuk-yazi .cuma-baslik { font-size: 23px; }
+  body.buyuk-yazi .cuma-ayet { font-size: 16px; }
+  body.buyuk-yazi .cuma-amel-item { font-size: 15px; }
+  body.buyuk-yazi .event-name { font-size: 17px; }
+  body.buyuk-yazi .event-desc { font-size: 14px; }
+  body.buyuk-yazi .nav-item { font-size: 11px; }
+  body.buyuk-yazi .modal-title { font-size: 21px; }
+
   /* Gökyüzü evreleri */
   body.phase-dawn      { --sky-top:#3a2747; --sky-bot:#1c1733; --glow:rgba(232,145,107,0.40); --glow-x:50%; --glow-y:14%; }
   body.phase-day       { --sky-top:#163049; --sky-bot:#0e2031; --glow:rgba(224,189,99,0.34); --glow-x:80%; --glow-y:12%; }
@@ -254,6 +290,12 @@
     padding: 12px 0; border-bottom: 1px solid var(--bg3);
   }
   .kaza-row:last-child { border-bottom: none; }
+  .kaza-ayrac {
+    font-size: 12px; color: var(--text3);
+    margin-top: 14px; padding-top: 12px;
+    border-top: 1px dashed var(--bg3);
+    text-transform: none; letter-spacing: 0.3px;
+  }
   .kaza-row-info { flex: 1; min-width: 0; }
   .kaza-row-name { font-size: 15px; color: var(--text); font-weight: 500; }
   .kaza-tally {
@@ -615,7 +657,11 @@
     border-radius: var(--radius-sm);
     color: var(--text3); font-size: 15px;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
   }
+  .vird-reset-btn:active { background: rgba(255,255,255,0.16); }
+  .vird-sil-btn:active { background: rgba(229,90,80,0.25); }
+  .vird-card-btns { display: flex; gap: 8px; }
 
   /* ─── Namaz Tesbihatı: tek satırlık derli toplu görünüm ─── */
   .tesbihat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -1011,6 +1057,16 @@
         <div class="ayar-val">Sayaca her dokunuşta</div>
       </div>
       <div class="toggle" id="toggle-tiklama-sesi" onclick="toggleTiklamaSesi()"></div>
+    </div>
+  </div>
+
+  <div class="ayarlar-section">
+    <div class="ayar-row">
+      <div class="ayar-left">
+        <div class="ayar-name">Büyük Yazı</div>
+        <div class="ayar-val">Daha rahat okunur (yaşlı dostu)</div>
+      </div>
+      <div class="toggle" id="toggle-buyuk-yazi" onclick="toggleBuyukYazi()"></div>
     </div>
   </div>
 
@@ -1419,6 +1475,7 @@ let state = {
   hicriTarih: '',
   manuelSehir: localStorage.getItem('manuelSehir') || '',
   darkMode: true,
+  buyukYazi: localStorage.getItem('buyukYazi') === 'on',
   streak: parseInt(localStorage.getItem('streak') || '0'),
   lastStreakDate: localStorage.getItem('lastStreakDate') || '',
   kilinanVakitler: JSON.parse(localStorage.getItem('kilinanVakitler') || '{}'),
@@ -1447,6 +1504,17 @@ function toggleTheme() {
   document.querySelector('.icon-btn').textContent = state.darkMode ? '☀' : '🌙';
   if (!state.darkMode) { temizleYildiz(); }
   else { _sonEvre = ''; gokyuzuGuncelle(); }
+}
+
+function renderBuyukYazi() {
+  document.body.classList.toggle('buyuk-yazi', state.buyukYazi);
+  const el = document.getElementById('toggle-buyuk-yazi');
+  if (el) el.classList.toggle('on', state.buyukYazi);
+}
+function toggleBuyukYazi() {
+  state.buyukYazi = !state.buyukYazi;
+  localStorage.setItem('buyukYazi', state.buyukYazi ? 'on' : 'off');
+  renderBuyukYazi();
 }
 
 // ─── TOAST ───────────────────────────────────────
@@ -1564,6 +1632,7 @@ function init() {
   renderVirdTarih();
   renderSesAyarVal();
   renderTiklamaSesiToggle();
+  renderBuyukYazi();
 
   if (state.manuelSehir) {
     fetchVakitlerByCity(state.manuelSehir);
@@ -2185,25 +2254,35 @@ function ceteleGoster(n) {
 function kazaToplam() {
   return KAZA_VAKITLERI.reduce((t, ad) => t + (state.kaza[ad] || 0), 0);
 }
+function kazaToplamMetin() {
+  // Vitir 5 vakitten ayrıdır (vacip); "vakit" yerine "farz" diyerek karışıklığı önlüyoruz.
+  const farz = ['Sabah','Öğle','İkindi','Akşam','Yatsı'].reduce((t, a) => t + (state.kaza[a] || 0), 0);
+  const vitir = state.kaza['Vitir'] || 0;
+  let s = `${farz} farz`;
+  if (vitir > 0) s += ` + ${vitir} vitir`;
+  return s;
+}
 function renderKazaKart() {
   const sub = document.getElementById('kaza-card-sub');
-  if (sub) sub.textContent = `Toplam kalan: ${kazaToplam()} vakit`;
+  if (sub) sub.textContent = `Kalan: ${kazaToplamMetin()}`;
+}
+function kazaSatir(ad) {
+  const n = state.kaza[ad] || 0;
+  return `<div class="kaza-row">
+    <button class="kaza-btn eksi" onclick="kazaAzalt('${ad}')" ${n<=0?'disabled':''}>−</button>
+    <div class="kaza-row-info">
+      <div class="kaza-row-name">${ad}</div>
+      <div class="kaza-tally">${ceteleGoster(n)}</div>
+    </div>
+    <div class="kaza-count">${n}</div>
+    <button class="kaza-btn" onclick="kazaArtir('${ad}')">+</button>
+  </div>`;
 }
 function renderKaza() {
-  const html = KAZA_VAKITLERI.map(ad => {
-    const n = state.kaza[ad] || 0;
-    return `<div class="kaza-row">
-      <button class="kaza-btn eksi" onclick="kazaAzalt('${ad}')" ${n<=0?'disabled':''}>−</button>
-      <div class="kaza-row-info">
-        <div class="kaza-row-name">${ad}</div>
-        <div class="kaza-tally">${ceteleGoster(n)}</div>
-      </div>
-      <div class="kaza-count">${n}</div>
-      <button class="kaza-btn" onclick="kazaArtir('${ad}')">+</button>
-    </div>`;
-  }).join('');
-  document.getElementById('kaza-list').innerHTML = html;
-  document.getElementById('kaza-total').textContent = `Toplam kalan: ${kazaToplam()} vakit`;
+  const farzlar = ['Sabah','Öğle','İkindi','Akşam','Yatsı'].map(kazaSatir).join('');
+  const vitir = `<div class="kaza-ayrac">Vitir (vacip · 5 vakitten ayrı)</div>` + kazaSatir('Vitir');
+  document.getElementById('kaza-list').innerHTML = farzlar + vitir;
+  document.getElementById('kaza-total').textContent = `Toplam kalan: ${kazaToplamMetin()}`;
   renderKazaKart();
 }
 function kazaKaydet() { localStorage.setItem('kaza', JSON.stringify(state.kaza)); }
@@ -2450,7 +2529,10 @@ function renderVirdPage() {
       return `<div class="vird-card">
         <div class="vird-card-top">
           <div class="vird-name">${v.emoji} ${v.ad}</div>
-          <button class="vird-reset-btn" onclick="resetTesbihat(${i})">↺</button>
+          <div class="vird-card-btns">
+            <button class="vird-reset-btn" onclick="resetTesbihat(${i})" title="Sıfırla">↺</button>
+            <button class="vird-reset-btn vird-sil-btn" onclick="silVird(${i})" title="Sil">🗑</button>
+          </div>
         </div>
         ${parcaHtml}
       </div>`;
@@ -2477,6 +2559,7 @@ function renderVirdPage() {
           ${isDone ? '✓ Tamamlandı' : '+1'}
         </button>
         <button class="vird-reset-btn" onclick="resetVird(${i})" title="Sıfırla">↺</button>
+        <button class="vird-reset-btn vird-sil-btn" onclick="silVird(${i})" title="Sil">🗑</button>
       </div>
     </div>`;
   }).join('');
@@ -2567,6 +2650,16 @@ function selectPreset(i, el) {
     document.getElementById('vird-input-target').disabled = false;
     document.getElementById('target-wrap').style.opacity = '1';
   }
+}
+
+function silVird(i) {
+  const v = state.virdler[i];
+  if (!v) return;
+  if (!confirm(`"${v.ad}" virdini silmek istediğine emin misin?`)) return;
+  state.virdler.splice(i, 1);
+  localStorage.setItem('virdler', JSON.stringify(state.virdler));
+  renderVirdPage();
+  showToast('Vird silindi');
 }
 
 function saveVird() {
