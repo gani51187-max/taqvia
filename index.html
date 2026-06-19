@@ -178,6 +178,16 @@
     padding-left: 12px; margin-top: 4px;
     display: flex; align-items: center; gap: 4px;
   }
+  .hadis-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 6px;
+  }
+  .hadis-share {
+    background: rgba(255,255,255,0.08); border: none;
+    width: 32px; height: 32px; border-radius: 50%;
+    font-size: 14px; cursor: pointer; color: var(--text2);
+  }
+  .hadis-share:active { background: rgba(255,255,255,0.18); }
 
   /* ─── ÖZEL GÜN BANNER ─── */
   .special-day {
@@ -190,6 +200,79 @@
     cursor: pointer;
   }
   .special-day-icon { font-size: 20px; }
+
+  /* ─── CUMA KARTI ─── */
+  .cuma-card {
+    background: linear-gradient(150deg, rgba(92,199,141,0.18), rgba(224,189,99,0.12));
+    -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    border: 1px solid rgba(92,199,141,0.35);
+    border-radius: var(--radius);
+    padding: 16px;
+    position: relative; overflow: hidden;
+  }
+  .cuma-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .cuma-emoji { font-size: 20px; }
+  .cuma-baslik {
+    font-family: 'Amiri', serif; font-size: 20px;
+    color: var(--gold2); flex: 1;
+  }
+  .cuma-share {
+    background: rgba(255,255,255,0.10); border: none;
+    width: 34px; height: 34px; border-radius: 50%;
+    font-size: 15px; cursor: pointer; color: var(--text);
+  }
+  .cuma-share:active { background: rgba(255,255,255,0.2); }
+  .cuma-ayet {
+    font-family: 'Amiri', serif; font-style: italic;
+    font-size: 14px; color: var(--text); line-height: 1.6;
+    margin-bottom: 12px; opacity: 0.95;
+  }
+  .cuma-amel { display: flex; flex-direction: column; gap: 6px; }
+  .cuma-amel-item { font-size: 13px; color: var(--text2); }
+
+  /* ─── KAZA KARTI ─── */
+  .kaza-card {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg2);
+    -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: var(--radius); padding: 14px 16px; cursor: pointer;
+  }
+  .kaza-card-left { display: flex; align-items: center; gap: 12px; }
+  .kaza-card-icon { font-size: 22px; }
+  .kaza-card-title { font-size: 15px; font-weight: 500; color: var(--text); }
+  .kaza-card-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+  /* ─── KAZA MODAL ─── */
+  .kaza-total {
+    text-align: center; font-size: 14px; color: var(--gold2);
+    background: var(--gold-dim); border-radius: var(--radius-sm);
+    padding: 10px; margin-bottom: 14px; font-weight: 600;
+  }
+  .kaza-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid var(--bg3);
+  }
+  .kaza-row:last-child { border-bottom: none; }
+  .kaza-row-info { flex: 1; min-width: 0; }
+  .kaza-row-name { font-size: 15px; color: var(--text); font-weight: 500; }
+  .kaza-tally {
+    font-size: 13px; color: var(--gold); letter-spacing: 1px;
+    margin-top: 3px; min-height: 16px; word-break: break-all;
+  }
+  .kaza-count {
+    font-size: 18px; font-weight: 600; color: var(--gold2);
+    min-width: 34px; text-align: center; font-variant-numeric: tabular-nums;
+  }
+  .kaza-btn {
+    width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+    border: 1px solid var(--gold); background: var(--gold-dim);
+    color: var(--gold2); font-size: 18px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .kaza-btn:active { background: rgba(224,189,99,0.3); transform: scale(0.92); }
+  .kaza-btn.eksi { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+  .kaza-btn:disabled { opacity: 0.3; cursor: default; }
 
   /* ─── BÜYÜK SAYAÇ ─── */
   .next-prayer-card {
@@ -420,7 +503,8 @@
     font-family: 'Inter', sans-serif;
     gap: 4px; transition: color 0.2s;
   }
-  .nav-item .ni { font-size: 22px; }
+  .nav-item .ni { font-size: 22px; line-height: 0; }
+  .nav-item .ni svg { width: 25px; height: 25px; display: block; }
   .nav-item.active { color: var(--gold); }
 
   /* ─── VIRD SAYFASI ─── */
@@ -578,12 +662,16 @@
   }
   .modal-overlay.open { display: flex; }
   .modal {
-    background: var(--bg2);
+    background: #141a32;
+    -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+    border-top: 1px solid rgba(255,255,255,0.10);
     border-radius: 24px 24px 0 0;
     padding: 24px 20px 40px;
     width: 100%;
     animation: slideUp 0.3s ease;
+    max-height: 88vh; overflow-y: auto;
   }
+  .light .modal { background: #faf7f0; }
   @keyframes slideUp {
     from { transform: translateY(100%); }
     to { transform: translateY(0); }
@@ -776,7 +864,10 @@
       <div class="hadis-label">✦ Vaktin Sözü</div>
       <div class="hadis-text" id="hadis-text">Yükleniyor...</div>
       <div class="hadis-source" id="hadis-source"></div>
-      <div class="hadis-tap">👆 Detay için dokun</div>
+      <div class="hadis-foot">
+        <span class="hadis-tap">👆 Detay için dokun</span>
+        <button class="hadis-share" onclick="event.stopPropagation(); hadisPaylas()" title="Paylaş">📤</button>
+      </div>
     </div>
 
     <!-- Özel Gün (varsa) -->
@@ -813,6 +904,33 @@
       <div class="streak-right" id="streak-today">
         Bugün: <strong id="kilindi-count">0</strong>/5 vakit
       </div>
+    </div>
+
+    <!-- Cuma kartı (yalnızca Cuma günü) -->
+    <div class="cuma-card" id="cuma-card" style="display:none">
+      <div class="cuma-head">
+        <span class="cuma-emoji">🕌</span>
+        <span class="cuma-baslik">Hayırlı Cumalar</span>
+        <button class="cuma-share" onclick="cumaPaylas()" title="Paylaş">📤</button>
+      </div>
+      <div class="cuma-ayet" id="cuma-ayet"></div>
+      <div class="cuma-amel">
+        <div class="cuma-amel-item">📖 Kehf Sûresi'ni oku</div>
+        <div class="cuma-amel-item">🤲 Bol salavat getir</div>
+        <div class="cuma-amel-item">⏳ İkindi–akşam arası icabet saatinde dua et</div>
+      </div>
+    </div>
+
+    <!-- Kaza Namazların kartı -->
+    <div class="kaza-card" id="kaza-card" onclick="openKazaModal()">
+      <div class="kaza-card-left">
+        <div class="kaza-card-icon">🧮</div>
+        <div>
+          <div class="kaza-card-title">Kaza Namazların</div>
+          <div class="kaza-card-sub" id="kaza-card-sub">Toplam kalan: 0 vakit</div>
+        </div>
+      </div>
+      <div style="color:var(--text3); font-size:18px">›</div>
     </div>
 
     <!-- 5 Vakit -->
@@ -933,16 +1051,16 @@
 <!-- ═══════════════════════════════════ -->
 <nav class="bottom-nav">
   <button class="nav-item active" onclick="goPage('namaz', this)">
-    <span class="ni">🕌</span><span>Namaz</span>
+    <span class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.4c.85.9.85 2.1 0 3"/><path d="M7 11c0-3 2.2-5 5-5s5 2 5 5"/><path d="M7 11v9h10v-9"/><path d="M10.4 20v-3a1.6 1.6 0 0 1 3.2 0v3"/><path d="M4 20V9"/><path d="M20 20V9"/><path d="M3 20.5h18"/></svg></span><span>Namaz</span>
   </button>
   <button class="nav-item" onclick="goPage('vird', this)">
-    <span class="ni">📿</span><span>Vird</span>
+    <span class="ni"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="4" r="1.15"/><circle cx="15.85" cy="5.3" r="1.15"/><circle cx="18.2" cy="8.5" r="1.15"/><circle cx="18.2" cy="12.5" r="1.15"/><circle cx="15.85" cy="15.7" r="1.15"/><circle cx="8.15" cy="5.3" r="1.15"/><circle cx="5.8" cy="8.5" r="1.15"/><circle cx="5.8" cy="12.5" r="1.15"/><circle cx="8.15" cy="15.7" r="1.15"/><circle cx="12" cy="17.6" r="1.5"/><path d="M12 19.4v2.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span><span>Vird</span>
   </button>
   <button class="nav-item" onclick="goPage('takvim', this)">
-    <span class="ni">📅</span><span>Takvim</span>
+    <span class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M3.5 9.5h17"/><path d="M8 3v4"/><path d="M16 3v4"/><circle cx="8" cy="13.5" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="13.5" r="1" fill="currentColor" stroke="none"/><circle cx="16" cy="13.5" r="1" fill="currentColor" stroke="none"/><circle cx="8" cy="17.5" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="17.5" r="1" fill="currentColor" stroke="none"/></svg></span><span>Takvim</span>
   </button>
   <button class="nav-item" onclick="goPage('ayarlar', this)">
-    <span class="ni">⚙️</span><span>Ayarlar</span>
+    <span class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M15.6 12h1.6M6.8 12h1.6M12 8.4V6.8M12 15.6v1.6M14.55 9.45l1.13-1.13M8.32 15.68l1.13-1.13M14.55 14.55l1.13 1.13M8.32 8.32l1.13 1.13"/></svg></span><span>Ayarlar</span>
   </button>
 </nav>
 
@@ -1085,6 +1203,17 @@
   </div>
 </div>
 
+<!-- Kaza Namazları Modal -->
+<div class="modal-overlay" id="kaza-modal" onclick="closeModal('kaza-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Kaza Namazların</div>
+    <div class="kaza-total" id="kaza-total">Toplam kalan: 0 vakit</div>
+    <div id="kaza-list"></div>
+    <div class="ses-not" style="margin-top:12px">Kıldıkça − tuşuyla azalt. Borcunu girmek için + tuşunu kullan. Sayılar bu cihazda saklanır.</div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
@@ -1207,14 +1336,43 @@ const HADİSLER = [
   { tr:"Rabbim! Doğrusu ben kendime zulmettim, beni bağışla.", kaynak:"Enbiyâ Sûresi, 87", arabic:"لَا إِلَٰهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ", full:"Hz. Yunus (a.s.) balığın karnındaki sıkıntılı anında bu duayı yaparak Allah'a yöneldi. Allah Teâlâ bu samimi yakarış sebebiyle onu sıkıntısından kurtardığını bildirmiştir. Bu dua, dert ve sıkıntı anlarında okunan en güzel zikirlerden biridir." },
 ];
 
-const ÖZEL_GÜNLER = [
-  { ay:1,  gun:1,  ad:"Yılbaşı",            ikon:"🎆", aciklama:"Miladi yılın ilk günü. Yeni bir yıla girmek, şükür ve dua için güzel bir vesile." },
-  { ay:3,  gun:18, ad:"Çanakkale Zaferi",   ikon:"🦅", aciklama:"1915'te gerçekleşen Çanakkale Deniz Zaferimizin yıl dönümü. Şehitlerimizi rahmetle anıyoruz." },
-  { ay:4,  gun:23, ad:"23 Nisan",           ikon:"🌷", aciklama:"Ulusal Egemenlik ve Çocuk Bayramı." },
-  { ay:5,  gun:19, ad:"19 Mayıs",           ikon:"🏃", aciklama:"Atatürk'ü Anma, Gençlik ve Spor Bayramı." },
-  { ay:8,  gun:30, ad:"30 Ağustos",         ikon:"⭐", aciklama:"Zafer Bayramı. Büyük Taarruz'un 1922'deki zaferiyle bağımsızlığımızın sembolü." },
-  { ay:10, gun:29, ad:"Cumhuriyet Bayramı", ikon:"🇹🇷", aciklama:"29 Ekim 1923'te Türkiye Cumhuriyeti ilan edildi. Cumhuriyetimizin kuruluşunu kutluyoruz." },
+// Dinî önemli günler — Diyanet 2026-2027 takvimi (Hicrî aya göre, miladî karşılıkları).
+// Tarih: 'YYYY-M-D' (todayKey ile aynı format için ayrıca tam tarih de tutuyoruz).
+const DINI_GUNLER = [
+  { tarih:'2026-06-16', ad:'Hicrî Yılbaşı', ikon:'🌙', tur:'gun',
+    aciklama:'1 Muharrem 1448. Peygamberimizin (s.a.v.) Mekke\'den Medine\'ye hicretiyle başlayan İslâm takviminin yeni yılı. Şükür, dua ve yeni niyetler için güzel bir başlangıç.' },
+  { tarih:'2026-06-25', ad:'Aşure Günü', ikon:'🍯', tur:'gun',
+    aciklama:'10 Muharrem. Pek çok peygamberin kurtuluşuna vesile olan mübarek gün. Bugün ve bir gün öncesinde/sonrasında nafile oruç tutmak, aşure ikram etmek ve sadaka vermek sünnettir.' },
+  { tarih:'2026-08-24', ad:'Mevlid Kandili', ikon:'🕌', tur:'kandil',
+    aciklama:'Peygamber Efendimiz Hz. Muhammed\'in (s.a.v.) dünyaya teşrif ettiği gece. Salavat getirmek, siyer okumak, dua ve ibadetle ihya edilir.' },
+  { tarih:'2026-12-10', ad:'Üç Ayların Başlangıcı', ikon:'🌙', tur:'gun',
+    aciklama:'Recep ayının başlamasıyla manevî hasat mevsimi Üç Aylar (Recep–Şaban–Ramazan) başlar. Tövbe, ibadet ve manevî hazırlık dönemidir.' },
+  { tarih:'2026-12-11', ad:'Regaib Kandili', ikon:'✨', tur:'kandil',
+    aciklama:'Recep ayının ilk cuma gecesi. Allah\'ın rahmet ve ihsanının bollaştığı, dua ve tövbenin makbul olduğu mübarek gece.' },
+  { tarih:'2027-01-04', ad:'Miraç Kandili', ikon:'🌌', tur:'kandil',
+    aciklama:'Peygamberimizin (s.a.v.) Mescid-i Harâm\'dan Mescid-i Aksâ\'ya, oradan göklere yükseldiği gece. Beş vakit namaz bu gecede farz kılınmıştır.' },
+  { tarih:'2027-01-22', ad:'Berat Kandili', ikon:'🌕', tur:'kandil',
+    aciklama:'Şaban ayının 15. gecesi. Affın ve beraatın gecesi; tövbe, istiğfar ve dua ile geçirilir.' },
+  { tarih:'2027-02-08', ad:'Ramazan Başlangıcı', ikon:'🌙', tur:'gun',
+    aciklama:'Oruç ayı Ramazan-ı Şerîf\'in ilk günü. Rahmet, mağfiret ve bereket ayı başlar.' },
+  { tarih:'2027-03-05', ad:'Kadir Gecesi', ikon:'⭐', tur:'kandil',
+    aciklama:'Bin aydan hayırlı gece. Kur\'ân-ı Kerîm bu gecede inmeye başlamıştır. İbadet, dua ve istiğfarla ihya edilir.' },
+  { tarih:'2027-03-10', ad:'Ramazan Bayramı', ikon:'🎉', tur:'bayram',
+    aciklama:'Ramazan orucunun ardından gelen şükür bayramı (3 gün). Bayram namazı, ziyaretler ve fitre ile idrak edilir.' },
+  { tarih:'2027-05-15', ad:'Kurban Bayramı Arefesi', ikon:'🐑', tur:'gun',
+    aciklama:'Kurban Bayramı\'nın arefe günü. Arefe orucu tutmak ve teşrik tekbirlerine başlamak faziletlidir.' },
+  { tarih:'2027-05-16', ad:'Kurban Bayramı', ikon:'🕋', tur:'bayram',
+    aciklama:'Hz. İbrahim\'in (a.s.) teslimiyetini anan, kurban ibadetinin yerine getirildiği bayram (4 gün).' },
+  { tarih:'2027-06-06', ad:'Hicrî Yılbaşı', ikon:'🌙', tur:'gun',
+    aciklama:'1 Muharrem 1449. Yeni hicrî yılın başlangıcı.' },
+  { tarih:'2027-06-15', ad:'Aşure Günü', ikon:'🍯', tur:'gun',
+    aciklama:'10 Muharrem. Nafile oruç, aşure ikramı ve sadaka ile değerlendirilen mübarek gün.' },
+  { tarih:'2027-08-15', ad:'Mevlid Kandili', ikon:'🕌', tur:'kandil',
+    aciklama:'Peygamber Efendimizin (s.a.v.) doğumunun anıldığı mübarek gece.' },
+  { tarih:'2027-12-24', ad:'Miraç Kandili', ikon:'🌌', tur:'kandil',
+    aciklama:'Peygamberimizin (s.a.v.) miraca yükselişinin anıldığı gece.' },
 ];
+const ÖZEL_GÜNLER = DINI_GUNLER; // geriye dönük uyumluluk
 
 const VİRD_PRESETS = [
   { ad:"Namaz Tesbihatı",    hedef:0,   emoji:"🕌", tesbihat:true },
@@ -1258,11 +1416,13 @@ let state = {
   vakitler: null,
   koordinat: null,
   sehir: '',
+  hicriTarih: '',
   manuelSehir: localStorage.getItem('manuelSehir') || '',
   darkMode: true,
   streak: parseInt(localStorage.getItem('streak') || '0'),
   lastStreakDate: localStorage.getItem('lastStreakDate') || '',
   kilinanVakitler: JSON.parse(localStorage.getItem('kilinanVakitler') || '{}'),
+  kaza: JSON.parse(localStorage.getItem('kaza') || '{"Sabah":0,"Öğle":0,"İkindi":0,"Akşam":0,"Yatsı":0,"Vitir":0}'),
   virdler: loadVirdler(),
   sesAyari: localStorage.getItem('sesAyari') || 'klasik',
   tiklamaSesi: localStorage.getItem('tiklamaSesi') !== 'off',
@@ -1347,16 +1507,26 @@ function openHadisModal() {
 
 // ─── ÖZEL GÜN ────────────────────────────────────
 function checkSpecialDay() {
-  const now = new Date();
-  const gun = now.getDate(), ay = now.getMonth() + 1;
-  const bugun = ÖZEL_GÜNLER.find(g => g.gun === gun && g.ay === ay);
+  const t = todayKey();
+  const bugun = DINI_GUNLER.find(g => g.tarih === t);
+  const el = document.getElementById('special-day');
   if (bugun) {
-    document.getElementById('special-day').style.display = 'flex';
+    const etiket = bugun.tur === 'kandil' ? 'Bu gece kandil' :
+                   bugun.tur === 'bayram' ? 'Bayramınız mübarek olsun' : 'Mübarek gün';
+    el.style.display = 'flex';
     document.getElementById('special-day-icon').textContent = bugun.ikon;
     document.getElementById('special-day-name').textContent = bugun.ad;
-    document.getElementById('special-day-sub').textContent = 'Bugün önemli bir gün · Detay için dokun';
-    document.getElementById('special-day')._data = bugun;
+    document.getElementById('special-day-sub').textContent = etiket + ' · Detay için dokun';
+    el._data = bugun;
+  } else {
+    el.style.display = 'none';
   }
+}
+
+function specialDayPaylas(ad, ikon) {
+  const metin = `${ikon} ${ad} mübarek olsun 🤲\n\n— Taqvia`;
+  if (navigator.share) navigator.share({ title: ad, text: metin }).catch(() => {});
+  else if (navigator.clipboard) navigator.clipboard.writeText(metin).then(() => showToast('Kopyalandı')).catch(() => {});
 }
 
 function openSpecialDay() {
@@ -1365,7 +1535,8 @@ function openSpecialDay() {
   document.getElementById('special-modal-content').innerHTML =
     `<div style="text-align:center; margin-bottom:16px; font-size:52px">${d.ikon}</div>
      <div style="font-family:'Amiri',serif;font-size:24px;color:var(--gold2);margin-bottom:12px;text-align:center">${d.ad}</div>
-     <div style="font-size:15px;color:var(--text2);line-height:1.8">${d.aciklama}</div>`;
+     <div style="font-size:15px;color:var(--text2);line-height:1.8">${d.aciklama}</div>
+     <button class="modal-save" style="margin-top:18px" onclick="specialDayPaylas('${d.ad}','${d.ikon}')">📤 Paylaş</button>`;
   openModal('special-modal');
 }
 
@@ -1387,6 +1558,8 @@ function uygulamayiPaylas() {
 function init() {
   loadHadis();
   checkSpecialDay();
+  cumaKartiGuncelle();
+  renderKazaKart();
   renderStreak();
   renderVirdTarih();
   renderSesAyarVal();
@@ -1412,10 +1585,21 @@ async function fetchVakitlerByCoord(lat, lng) {
   try {
     const res = await fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lng}&method=13`);
     const data = await res.json();
+    hicriTarihiAl(data);
     processVakitler(data.data.timings);
   } catch(e) {
     document.getElementById('loc-text').textContent = 'Bağlantı hatası';
   }
+}
+
+function hicriTarihiAl(data) {
+  try {
+    const h = data.data.date.hijri;
+    const ay = (h.month && h.month.tr) ? h.month.tr : (h.month.en || '');
+    state.hicriTarih = `${h.day} ${ay} ${h.year}`;
+    const el = document.getElementById('takvim-hicri');
+    if (el) el.textContent = state.hicriTarih;
+  } catch (e) {}
 }
 
 function asciiSehir(s) {
@@ -1431,6 +1615,7 @@ async function fetchVakitlerByCity(city) {
     const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(apiCity)}&country=Turkey&method=13`);
     const data = await res.json();
     if (!data.data || !data.data.timings) throw new Error('vakit yok');
+    hicriTarihiAl(data);
     state.sehir = city;
     document.getElementById('loc-text').textContent = city;
     document.getElementById('ayar-sehir').textContent = city + (state.manuelSehir ? '' : ' (Konum)');
@@ -1984,26 +2169,127 @@ function checkAllPrayers() {
   }
 }
 
-// ─── STREAK ──────────────────────────────────────
-function checkStreakUpdate() {
-  const today = todayKey();
-  if (state.lastStreakDate === today) return;
-  const yesterday = (() => {
-    const d = new Date(); d.setDate(d.getDate() - 1);
-    return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
-  })();
-  if (state.lastStreakDate === yesterday) {
-    state.streak++;
-  } else if (state.lastStreakDate !== today) {
-    state.streak = 1;
+// ─── KAZA NAMAZLARI ──────────────────────────────
+const KAZA_VAKITLERI = ['Sabah','Öğle','İkindi','Akşam','Yatsı','Vitir'];
+function ceteleGoster(n) {
+  // 5'erli çetele: ||||̶ grupları
+  if (n <= 0) return '<span style="color:var(--text3)">—</span>';
+  if (n > 40) return '𝟝×' + Math.floor(n/5) + (n%5 ? ' +' + (n%5) : ''); // çok büyükse sadeleştir
+  let s = '';
+  const tamGrup = Math.floor(n / 5);
+  const kalan = n % 5;
+  for (let i = 0; i < tamGrup; i++) s += '<span style="text-decoration:line-through">||||</span> ';
+  s += '|'.repeat(kalan);
+  return s;
+}
+function kazaToplam() {
+  return KAZA_VAKITLERI.reduce((t, ad) => t + (state.kaza[ad] || 0), 0);
+}
+function renderKazaKart() {
+  const sub = document.getElementById('kaza-card-sub');
+  if (sub) sub.textContent = `Toplam kalan: ${kazaToplam()} vakit`;
+}
+function renderKaza() {
+  const html = KAZA_VAKITLERI.map(ad => {
+    const n = state.kaza[ad] || 0;
+    return `<div class="kaza-row">
+      <button class="kaza-btn eksi" onclick="kazaAzalt('${ad}')" ${n<=0?'disabled':''}>−</button>
+      <div class="kaza-row-info">
+        <div class="kaza-row-name">${ad}</div>
+        <div class="kaza-tally">${ceteleGoster(n)}</div>
+      </div>
+      <div class="kaza-count">${n}</div>
+      <button class="kaza-btn" onclick="kazaArtir('${ad}')">+</button>
+    </div>`;
+  }).join('');
+  document.getElementById('kaza-list').innerHTML = html;
+  document.getElementById('kaza-total').textContent = `Toplam kalan: ${kazaToplam()} vakit`;
+  renderKazaKart();
+}
+function kazaKaydet() { localStorage.setItem('kaza', JSON.stringify(state.kaza)); }
+function kazaArtir(ad) {
+  state.kaza[ad] = (state.kaza[ad] || 0) + 1;
+  kazaKaydet(); renderKaza();
+}
+function kazaAzalt(ad) {
+  if (!state.kaza[ad] || state.kaza[ad] <= 0) return;
+  state.kaza[ad]--;
+  kazaKaydet(); renderKaza();
+  if (state.kaza[ad] === 0) showToast(`${ad} kazaların bitti, Allah kabul etsin 🤲`);
+}
+function openKazaModal() { renderKaza(); openModal('kaza-modal'); }
+
+// ─── CUMA KARTI ──────────────────────────────────
+const CUMA_AYETLERI = [
+  '"Ey iman edenler! Cuma günü namaz için çağrı yapıldığında, Allah\'ı anmaya koşun." (Cuma, 9)',
+  '"Kim Cuma günü Kehf Sûresi\'ni okursa, iki Cuma arası nurla aydınlanır." (Hâkim)',
+  '"Günlerin en hayırlısı Cuma günüdür." (Müslim)',
+  '"Cuma günü bana çokça salavat getirin." (Ebû Dâvûd)',
+];
+function cumaKartiGuncelle() {
+  const kart = document.getElementById('cuma-card');
+  if (!kart) return;
+  if (new Date().getDay() === 5) { // 5 = Cuma
+    const i = gunSirasi() % CUMA_AYETLERI.length;
+    document.getElementById('cuma-ayet').textContent = CUMA_AYETLERI[i];
+    kart.style.display = 'block';
+  } else {
+    kart.style.display = 'none';
   }
-  state.lastStreakDate = today;
-  localStorage.setItem('streak', state.streak);
-  localStorage.setItem('lastStreakDate', state.lastStreakDate);
-  renderStreak();
+}
+function cumaPaylas() {
+  const ayet = document.getElementById('cuma-ayet').textContent;
+  const metin = `Hayırlı Cumalar 🕌\n\n${ayet}\n\n— Taqvia`;
+  if (navigator.share) {
+    navigator.share({ title: 'Hayırlı Cumalar', text: metin }).catch(() => {});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(metin).then(() => showToast('Kopyalandı, paylaşabilirsin')).catch(() => {});
+  }
 }
 
+// ─── GÜNÜN SÖZÜNÜ PAYLAŞ ─────────────────────────
+function hadisPaylas() {
+  const h = hadisSec();
+  const metin = `"${h.tr}"\n— ${h.kaynak}\n\nTaqvia`;
+  if (navigator.share) {
+    navigator.share({ title: 'Vaktin Sözü', text: metin }).catch(() => {});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(metin).then(() => showToast('Kopyalandı, paylaşabilirsin')).catch(() => {});
+  }
+}
+
+// ─── STREAK (geçmişten hesaplanır) ───────────────
+// Bir gün "tamam" sayılır: o gün 5 farzın tamamı işaretliyse.
+// Streak: bugünden (ya da bugün henüz tamamlanmadıysa dünden) geriye doğru
+// art arda tamamlanmış gün sayısı.
+function gunKey(d) {
+  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+function gunTamamMi(key) {
+  const k = state.kilinanVakitler[key] || {};
+  return FARZ_VAKITLER.every(ad => k[ad]);
+}
+function hesaplaStreak() {
+  let sayac = 0;
+  const d = new Date();
+  // Bugün tamamlanmadıysa streak'i bozma; dünden saymaya başla.
+  if (!gunTamamMi(gunKey(d))) {
+    d.setDate(d.getDate() - 1);
+  }
+  while (gunTamamMi(gunKey(d))) {
+    sayac++;
+    d.setDate(d.getDate() - 1);
+  }
+  return sayac;
+}
+function checkStreakUpdate() {
+  state.streak = hesaplaStreak();
+  localStorage.setItem('streak', state.streak);
+  localStorage.setItem('lastStreakDate', todayKey());
+  renderStreak();
+}
 function renderStreak() {
+  state.streak = hesaplaStreak();
   document.getElementById('streak-num').textContent = state.streak;
 }
 
@@ -2183,36 +2469,50 @@ function renderTakvim() {
   const d = new Date();
   const aylar = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
   document.getElementById('takvim-month').textContent = `${aylar[d.getMonth()]} ${d.getFullYear()}`;
-  document.getElementById('takvim-hicri').textContent = 'Hicri takvim hesaplanıyor...';
+  document.getElementById('takvim-hicri').textContent = state.hicriTarih || 'Hicrî tarih yükleniyor...';
 
-  // Yılın geri kalanındaki özel günleri göster
-  const ayAdi = ['', 'Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
-  const mevcutAy = d.getMonth() + 1;
-  const gunler = ÖZEL_GÜNLER
-    .filter(g => g.ay >= mevcutAy)
-    .sort((a, b) => a.ay !== b.ay ? a.ay - b.ay : a.gun - b.gun);
+  const ayKisa = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+  const bugun0 = new Date(d.getFullYear(), d.getMonth(), d.getDate());
 
-  const html = gunler.map(g =>
-    `<div class="event-card" onclick="openEventDetail(${ÖZEL_GÜNLER.indexOf(g)})">
-      <div class="event-date">
-        <div class="event-day">${g.gun}</div>
-        <div class="event-month">${ayAdi[g.ay]}</div>
+  const gunler = DINI_GUNLER
+    .map(g => {
+      const [y, mo, da] = g.tarih.split('-').map(Number);
+      const tar = new Date(y, mo - 1, da);
+      const fark = Math.round((tar - bugun0) / 86400000);
+      return { ...g, tar, fark };
+    })
+    .filter(g => g.fark >= 0)              // bugünden itibaren
+    .sort((a, b) => a.fark - b.fark)
+    .slice(0, 12);
+
+  const kalanMetin = (n) => n === 0 ? 'Bugün' : n === 1 ? 'Yarın' : `${n} gün sonra`;
+  const turRenk = (t) => t === 'bayram' ? 'var(--green)' : 'var(--gold)';
+
+  const html = gunler.map(g => {
+    const [y, mo, da] = g.tarih.split('-').map(Number);
+    return `<div class="event-card" onclick="openEventDetail(${DINI_GUNLER.indexOf(DINI_GUNLER.find(x=>x.tarih===g.tarih&&x.ad===g.ad))})">
+      <div class="event-date" style="border-color:${turRenk(g.tur)}">
+        <div class="event-day">${da}</div>
+        <div class="event-month">${ayKisa[mo-1]}</div>
       </div>
       <div class="event-info">
         <div class="event-name">${g.ikon} ${g.ad}</div>
-        <div class="event-desc">${g.aciklama.substring(0,80)}...</div>
+        <div class="event-desc">${kalanMetin(g.fark)} · ${da} ${aylar[mo-1]} ${y}</div>
       </div>
-    </div>`
-  ).join('');
-  document.getElementById('events-list').innerHTML = html;
+    </div>`;
+  }).join('');
+  document.getElementById('events-list').innerHTML = html ||
+    '<div style="text-align:center;color:var(--text3);padding:30px">Yaklaşan dinî gün bulunamadı</div>';
 }
 
 function openEventDetail(i) {
-  const d = ÖZEL_GÜNLER[i];
+  const d = DINI_GUNLER[i];
+  if (!d) return;
   document.getElementById('special-modal-content').innerHTML =
     `<div style="text-align:center;margin-bottom:16px;font-size:52px">${d.ikon}</div>
      <div style="font-family:'Amiri',serif;font-size:24px;color:var(--gold2);margin-bottom:12px;text-align:center">${d.ad}</div>
-     <div style="font-size:15px;color:var(--text2);line-height:1.8">${d.aciklama}</div>`;
+     <div style="font-size:15px;color:var(--text2);line-height:1.8">${d.aciklama}</div>
+     <button class="modal-save" style="margin-top:18px" onclick="specialDayPaylas('${d.ad}','${d.ikon}')">📤 Paylaş</button>`;
   openModal('special-modal');
 }
 
