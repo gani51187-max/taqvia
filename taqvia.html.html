@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0f1a2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Vird</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #1a2944;
+    --bg2: #233452;
+    --bg3: #2e4163;
+    --gold: #c9a84c;
+    --gold2: #e8c97a;
+    --gold-dim: rgba(201,168,76,0.15);
+    --text: #e8e4d8;
+    --text2: #9fa8b4;
+    --text3: #6b7685;
+    --green: #4caf7d;
+    --green-dim: rgba(76,175,125,0.15);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  .light {
+    --bg: #f5f2eb;
+    --bg2: #ede9df;
+    --bg3: #e2ddd1;
+    --gold: #a07830;
+    --gold2: #7a5a1e;
+    --gold-dim: rgba(160,120,48,0.12);
+    --text: #1a1a1a;
+    --text2: #4a4a4a;
+    --text3: #7a7a7a;
+    --green: #2e7d5a;
+    --green-dim: rgba(46,125,90,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* ─── TOP BAR ─── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 8px;
+  }
+  .topbar-logo {
+    font-family: 'Amiri', serif;
+    font-size: 22px;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+  .topbar-right { display: flex; gap: 12px; align-items: center; }
+  .icon-btn {
+    width: 36px; height: 36px;
+    background: var(--bg3);
+    border: none; border-radius: 50%;
+    color: var(--text2);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .icon-btn:active { background: var(--gold-dim); }
+
+  /* ─── MAIN SCROLL ─── */
+  .main {
+    padding: 0 16px 100px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+
+  /* ─── LOCATION ─── */
+  .location-bar {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--text3);
+    padding: 0 4px;
+  }
+  .location-bar span { color: var(--text2); }
+
+  /* ─── HADİS KARTI ─── */
+  .hadis-card {
+    background: var(--bg2);
+    border: 1px solid var(--gold-dim);
+    border-radius: var(--radius);
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .hadis-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--gold);
+    border-radius: 3px 0 0 3px;
+  }
+  .hadis-card:active { border-color: var(--gold); }
+  .hadis-label {
+    font-size: 11px; font-weight: 600;
+    color: var(--gold); letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 8px;
+    padding-left: 12px;
+  }
+  .hadis-text {
+    font-size: 14px; line-height: 1.7;
+    color: var(--text2); padding-left: 12px;
+    font-style: italic;
+  }
+  .hadis-source {
+    font-size: 12px; color: var(--text3);
+    padding-left: 12px; margin-top: 6px;
+  }
+  .hadis-tap {
+    font-size: 11px; color: var(--text3);
+    padding-left: 12px; margin-top: 4px;
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  /* ─── ÖZEL GÜN BANNER ─── */
+  .special-day {
+    background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.05));
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: var(--radius-sm);
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--gold2);
+    cursor: pointer;
+  }
+  .special-day-icon { font-size: 20px; }
+
+  /* ─── BÜYÜK SAYAÇ ─── */
+  .next-prayer-card {
+    background: var(--bg2);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .next-prayer-card::after {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 140px; height: 140px;
+    background: radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .next-label {
+    font-size: 11px; font-weight: 600;
+    color: var(--text3); letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 4px;
+  }
+  .next-name {
+    font-family: 'Amiri', serif;
+    font-size: 36px; color: var(--gold2);
+    margin-bottom: 2px;
+  }
+  .next-time {
+    font-size: 15px; color: var(--text2);
+    margin-bottom: 16px;
+  }
+  .countdown {
+    font-size: 44px; font-weight: 300;
+    color: var(--text); letter-spacing: 2px;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 16px;
+    line-height: 1;
+  }
+  .countdown span { color: var(--gold); }
+  .kildi-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--green-dim);
+    border: 1px solid var(--green);
+    border-radius: 40px;
+    padding: 10px 28px;
+    color: var(--green);
+    font-size: 15px; font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .kildi-btn:active { transform: scale(0.96); background: rgba(76,175,125,0.25); }
+  .kildi-btn.done {
+    background: var(--green-dim);
+    border-color: var(--green);
+    color: var(--green);
+    opacity: 0.6;
+  }
+
+  /* ─── STREAK ─── */
+  .streak-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg2); border-radius: var(--radius-sm);
+    padding: 12px 16px;
+  }
+  .streak-left { display: flex; align-items: center; gap: 10px; }
+  .streak-icon { font-size: 24px; }
+  .streak-info { display: flex; flex-direction: column; }
+  .streak-num { font-size: 22px; font-weight: 600; color: var(--text); line-height: 1; }
+  .streak-lbl { font-size: 12px; color: var(--text3); }
+  .streak-right { font-size: 12px; color: var(--text2); text-align: right; line-height: 1.5; }
+
+  /* ─── 5 VAKİT LİSTESİ ─── */
+  .vakitler {
+    background: var(--bg2);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .vakitler-header {
+    padding: 14px 16px 10px;
+    font-size: 12px; font-weight: 600;
+    color: var(--text3); letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--bg3);
+  }
+  .vakit-row {
+    display: flex; align-items: center;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--bg3);
+    transition: background 0.15s;
+  }
+  .vakit-row:last-child { border-bottom: none; }
+  .vakit-row.active { background: var(--gold-dim); }
+  .vakit-row.kilindi { opacity: 0.5; }
+  .vakit-icon { font-size: 18px; width: 30px; }
+  .vakit-name {
+    flex: 1;
+    font-size: 15px; font-weight: 500;
+    color: var(--text);
+    margin-left: 4px;
+  }
+  .vakit-row.active .vakit-name { color: var(--gold2); font-weight: 600; }
+  .vakit-saat {
+    font-size: 15px; font-weight: 500;
+    color: var(--text2);
+    font-variant-numeric: tabular-nums;
+    margin-right: 12px;
+  }
+  .vakit-check {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 1.5px solid var(--text3);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 13px;
+    color: transparent;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .vakit-check.done {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+  .vakit-check:active { transform: scale(0.9); }
+  .vakit-alarm {
+    width: 32px; height: 32px; margin-right: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; cursor: pointer; opacity: 0.5;
+    border-radius: 50%; transition: all 0.2s; flex-shrink: 0;
+  }
+  .vakit-alarm:active { background: var(--gold-dim); opacity: 1; }
+  .vakit-alarm.set { opacity: 1; }
+
+  /* ─── BOTTOM NAV ─── */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--bg2);
+    border-top: 1px solid var(--bg3);
+    display: flex;
+    padding-bottom: env(safe-area-inset-bottom, 8px);
+    z-index: 100;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 10px 0 6px;
+    cursor: pointer; border: none; background: none;
+    color: var(--text3); font-size: 10px;
+    font-family: 'Inter', sans-serif;
+    gap: 4px; transition: color 0.2s;
+  }
+  .nav-item .ni { font-size: 22px; }
+  .nav-item.active { color: var(--gold); }
+
+  /* ─── VIRD SAYFASI ─── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .vird-header {
+    padding: 8px 20px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .vird-title {
+    font-family: 'Amiri', serif;
+    font-size: 26px; color: var(--gold2);
+  }
+  .vird-subtitle { font-size: 12px; color: var(--text3); }
+  .add-vird-btn {
+    width: 38px; height: 38px;
+    background: var(--gold);
+    border: none; border-radius: 50%;
+    color: var(--bg); font-size: 22px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-weight: 300;
+  }
+
+  .vird-list { padding: 0 16px; display: flex; flex-direction: column; gap: 12px; }
+
+  .vird-card {
+    background: var(--bg2);
+    border-radius: var(--radius);
+    padding: 16px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .vird-card.active-vird { border-color: var(--gold); }
+  .vird-card-top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .vird-name {
+    font-size: 15px; font-weight: 500; color: var(--text);
+    flex: 1;
+  }
+  .vird-count-lbl {
+    font-size: 13px; color: var(--text3);
+    margin-top: 2px;
+  }
+  .vird-nums {
+    text-align: right;
+  }
+  .vird-current {
+    font-size: 28px; font-weight: 600;
+    color: var(--gold2); line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .vird-target { font-size: 12px; color: var(--text3); }
+
+  .vird-progress {
+    height: 4px; background: var(--bg3);
+    border-radius: 2px; overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .vird-progress-fill {
+    height: 100%; background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+  .vird-progress-fill.done { background: var(--green); }
+
+  .vird-actions { display: flex; gap: 8px; }
+  .vird-tap-btn {
+    flex: 1; padding: 12px;
+    background: var(--gold-dim); border: 1px solid var(--gold);
+    border-radius: var(--radius-sm);
+    color: var(--gold2); font-size: 20px;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    transition: background 0.15s, transform 0.1s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .vird-tap-btn:active { background: rgba(201,168,76,0.3); transform: scale(0.97); }
+  .vird-tap-btn.done-btn {
+    background: var(--green-dim); border-color: var(--green);
+    color: var(--green);
+  }
+  .vird-reset-btn {
+    width: 44px; height: 44px;
+    background: var(--bg3); border: none;
+    border-radius: var(--radius-sm);
+    color: var(--text3); font-size: 16px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ─── VİRD EKLE MODAL ─── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200; display: none;
+    align-items: flex-end;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg2);
+    border-radius: 24px 24px 0 0;
+    padding: 24px 20px 40px;
+    width: 100%;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: var(--bg3); border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+  .modal-title {
+    font-size: 17px; font-weight: 600;
+    color: var(--text); margin-bottom: 16px;
+  }
+  .modal-label {
+    font-size: 12px; font-weight: 600;
+    color: var(--text3); letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .modal-input {
+    width: 100%; padding: 12px 14px;
+    background: var(--bg3); border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    color: var(--text); font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    outline: none; margin-bottom: 14px;
+    transition: border-color 0.2s;
+  }
+  .modal-input:focus { border-color: var(--gold); }
+  .preset-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .preset-chip {
+    padding: 7px 12px; background: var(--bg3);
+    border: 1px solid transparent;
+    border-radius: 20px; font-size: 13px;
+    color: var(--text2); cursor: pointer;
+    transition: all 0.2s;
+  }
+  .preset-chip.selected { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+  .modal-save {
+    width: 100%; padding: 14px;
+    background: var(--gold); border: none;
+    border-radius: var(--radius-sm);
+    color: var(--bg); font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+  }
+
+  /* ─── HADİS DETAY MODAL ─── */
+  .hadis-modal-body {
+    max-height: 70vh; overflow-y: auto;
+  }
+  .hadis-arabic {
+    font-family: 'Amiri', serif;
+    font-size: 22px; text-align: right;
+    line-height: 1.8; color: var(--gold2);
+    margin-bottom: 16px; direction: rtl;
+  }
+  .hadis-full {
+    font-size: 15px; line-height: 1.8;
+    color: var(--text2); margin-bottom: 12px;
+  }
+  .hadis-detail-source {
+    font-size: 13px; color: var(--text3);
+    padding-top: 12px; border-top: 1px solid var(--bg3);
+  }
+
+  /* ─── TAKVIM ─── */
+  .takvim-page { padding: 0 16px 100px; }
+  .takvim-top {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 4px 16px;
+  }
+  .takvim-month {
+    font-family: 'Amiri', serif;
+    font-size: 22px; color: var(--gold2);
+  }
+  .takvim-hicri { font-size: 13px; color: var(--text3); }
+  .events-list { display: flex; flex-direction: column; gap: 10px; }
+  .event-card {
+    background: var(--bg2); border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    display: flex; gap: 14px; align-items: flex-start;
+    cursor: pointer; border: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .event-card:active { border-color: var(--gold-dim); }
+  .event-date {
+    background: var(--gold-dim);
+    border-radius: 8px;
+    padding: 6px 10px;
+    text-align: center; min-width: 44px;
+  }
+  .event-day { font-size: 20px; font-weight: 600; color: var(--gold); line-height: 1; }
+  .event-month { font-size: 11px; color: var(--text3); }
+  .event-info {}
+  .event-name { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .event-desc { font-size: 13px; color: var(--text3); line-height: 1.5; }
+
+  /* ─── AYARLAR ─── */
+  .ayarlar-page { padding: 0 16px 100px; }
+  .ayarlar-section {
+    background: var(--bg2); border-radius: var(--radius);
+    overflow: hidden; margin-bottom: 14px;
+  }
+  .ayar-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--bg3);
+  }
+  .ayar-row:last-child { border-bottom: none; }
+  .ayar-left { display: flex; flex-direction: column; gap: 2px; }
+  .ayar-name { font-size: 15px; color: var(--text); }
+  .ayar-val { font-size: 12px; color: var(--text3); }
+  .toggle {
+    width: 46px; height: 26px;
+    background: var(--bg3); border-radius: 13px;
+    position: relative; cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .toggle.on { background: var(--green); }
+  .toggle::after {
+    content: '';
+    position: absolute; top: 3px; left: 3px;
+    width: 20px; height: 20px;
+    background: white; border-radius: 50%;
+    transition: transform 0.2s;
+  }
+  .toggle.on::after { transform: translateX(20px); }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--bg3); color: var(--text);
+    padding: 10px 20px; border-radius: 20px;
+    font-size: 14px; opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 300; white-space: nowrap;
+    border: 1px solid var(--gold-dim);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ─── TAMAMLANDI ANİMASYON ─── */
+  .celebrate {
+    position: fixed; inset: 0; z-index: 400;
+    display: none; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.6);
+  }
+  .celebrate.show { display: flex; }
+  .celebrate-box {
+    background: var(--bg2); border-radius: 24px;
+    padding: 36px 40px; text-align: center;
+    border: 1px solid var(--gold);
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .celebrate-emoji { font-size: 56px; margin-bottom: 12px; }
+  .celebrate-title {
+    font-family: 'Amiri', serif;
+    font-size: 26px; color: var(--gold2); margin-bottom: 8px;
+  }
+  .celebrate-sub { font-size: 14px; color: var(--text2); line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">وِرد · Vird</div>
+  <div class="topbar-right">
+    <button class="icon-btn" onclick="toggleTheme()" title="Tema">☀</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SAYFA: NAMAZ -->
+<!-- ═══════════════════════════════════ -->
+<div id="page-namaz" class="page active">
+  <div class="main">
+
+    <div class="location-bar">
+      📍 <span id="loc-text">Konum alınıyor...</span>
+    </div>
+
+    <!-- Hadis Kartı -->
+    <div class="hadis-card" onclick="openHadisModal()">
+      <div class="hadis-label">✦ Günün Hadisi</div>
+      <div class="hadis-text" id="hadis-text">Yükleniyor...</div>
+      <div class="hadis-source" id="hadis-source"></div>
+      <div class="hadis-tap">👆 Detay için dokun</div>
+    </div>
+
+    <!-- Özel Gün (varsa) -->
+    <div class="special-day" id="special-day" style="display:none" onclick="openSpecialDay()">
+      <div class="special-day-icon" id="special-day-icon">🌙</div>
+      <div>
+        <div style="font-weight:600" id="special-day-name"></div>
+        <div style="font-size:12px;opacity:0.8" id="special-day-sub"></div>
+      </div>
+      <div style="margin-left:auto; font-size:18px; opacity:0.6">›</div>
+    </div>
+
+    <!-- Büyük Sayaç -->
+    <div class="next-prayer-card">
+      <div class="next-label">Sıradaki Namaz</div>
+      <div class="next-name" id="next-name">—</div>
+      <div class="next-time" id="next-time"></div>
+      <div class="countdown" id="countdown"><span>—</span></div>
+      <button class="kildi-btn" id="kildi-main-btn" onclick="kildimMain()">
+        <span>✓</span> Namazı Kıldım
+      </button>
+    </div>
+
+    <!-- Streak -->
+    <div class="streak-bar">
+      <div class="streak-left">
+        <div class="streak-icon">🔥</div>
+        <div class="streak-info">
+          <div class="streak-num" id="streak-num">0</div>
+          <div class="streak-lbl">gün kesintisiz</div>
+        </div>
+      </div>
+      <div class="streak-right" id="streak-today">
+        Bugün: <strong id="kilindi-count">0</strong>/5 vakit
+      </div>
+    </div>
+
+    <!-- 5 Vakit -->
+    <div class="vakitler">
+      <div class="vakitler-header">Bugünün Vakitleri</div>
+      <div id="vakit-list"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SAYFA: VİRD -->
+<!-- ═══════════════════════════════════ -->
+<div id="page-vird" class="page">
+  <div class="vird-header">
+    <div>
+      <div class="vird-title">Günlük Vird</div>
+      <div class="vird-subtitle" id="vird-tarih"></div>
+    </div>
+    <button class="add-vird-btn" onclick="openVirdModal()">+</button>
+  </div>
+  <div class="vird-list" id="vird-list"></div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SAYFA: TAKVİM -->
+<!-- ═══════════════════════════════════ -->
+<div id="page-takvim" class="page takvim-page">
+  <div class="takvim-top">
+    <div>
+      <div class="takvim-month" id="takvim-month"></div>
+      <div class="takvim-hicri" id="takvim-hicri"></div>
+    </div>
+  </div>
+  <div class="events-list" id="events-list"></div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SAYFA: AYARLAR -->
+<!-- ═══════════════════════════════════ -->
+<div id="page-ayarlar" class="page ayarlar-page">
+  <div style="padding:8px 4px 16px; font-family:'Amiri',serif; font-size:22px; color:var(--gold2)">Ayarlar</div>
+
+  <div class="ayarlar-section">
+    <div class="ayar-row">
+      <div class="ayar-left">
+        <div class="ayar-name">Namaz Hatırlatıcısı</div>
+        <div class="ayar-val">Vakitten 10 dakika önce</div>
+      </div>
+      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <div class="ayar-row">
+      <div class="ayar-left">
+        <div class="ayar-name">Vird Hatırlatıcısı</div>
+        <div class="ayar-val">Günlük saat 21:00</div>
+      </div>
+      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <div class="ayar-row">
+      <div class="ayar-left">
+        <div class="ayar-name">Titreşim</div>
+        <div class="ayar-val">Sayaç hedefinde</div>
+      </div>
+      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    </div>
+  </div>
+
+  <div class="ayarlar-section">
+    <div class="ayar-row">
+      <div class="ayar-left">
+        <div class="ayar-name">Hesaplama Yöntemi</div>
+        <div class="ayar-val">Diyanet İşleri Başkanlığı</div>
+      </div>
+      <div style="color:var(--text3); font-size:18px">›</div>
+    </div>
+    <div class="ayar-row">
+      <div class="ayar-left">
+        <div class="ayar-name">Şehir</div>
+        <div class="ayar-val" id="ayar-sehir">Otomatik (Konum)</div>
+      </div>
+      <div style="color:var(--text3); font-size:18px">›</div>
+    </div>
+  </div>
+
+  <div style="text-align:center; font-size:12px; color:var(--text3); margin-top:24px">
+    Vird v0.1 · Namaz vakitleri: Aladhan API
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- BOTTOM NAV -->
+<!-- ═══════════════════════════════════ -->
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="goPage('namaz', this)">
+    <span class="ni">🕌</span><span>Namaz</span>
+  </button>
+  <button class="nav-item" onclick="goPage('vird', this)">
+    <span class="ni">📿</span><span>Vird</span>
+  </button>
+  <button class="nav-item" onclick="goPage('takvim', this)">
+    <span class="ni">📅</span><span>Takvim</span>
+  </button>
+  <button class="nav-item" onclick="goPage('ayarlar', this)">
+    <span class="ni">⚙️</span><span>Ayarlar</span>
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════ -->
+<!-- MODALS -->
+<!-- ═══════════════════════════════════ -->
+
+<!-- Hadis Modal -->
+<div class="modal-overlay" id="hadis-modal" onclick="closeModal('hadis-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="hadis-modal-body">
+      <div class="hadis-arabic" id="hadis-arabic"></div>
+      <div class="hadis-full" id="hadis-full"></div>
+      <div class="hadis-detail-source" id="hadis-detail-source"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Vird Ekle Modal -->
+<div class="modal-overlay" id="vird-modal" onclick="closeModal('vird-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Yeni Vird Ekle</div>
+    <div class="modal-label">Hazır Şablonlar</div>
+    <div class="preset-list" id="preset-list"></div>
+    <div class="modal-label">Adı</div>
+    <input class="modal-input" id="vird-input-name" placeholder="Örn: 100 Salavat" type="text">
+    <div id="target-wrap">
+      <div class="modal-label">Hedef Sayı</div>
+      <input class="modal-input" id="vird-input-target" placeholder="100" type="number" inputmode="numeric">
+    </div>
+    <button class="modal-save" onclick="saveVird()">Vird Ekle</button>
+  </div>
+</div>
+
+<!-- Özel Gün Modal -->
+<div class="modal-overlay" id="special-modal" onclick="closeModal('special-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div id="special-modal-content"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Kutlama -->
+<div class="celebrate" id="celebrate" onclick="document.getElementById('celebrate').classList.remove('show')">
+  <div class="celebrate-box">
+    <div class="celebrate-emoji" id="celebrate-emoji">✨</div>
+    <div class="celebrate-title" id="celebrate-title">Mâşâallah!</div>
+    <div class="celebrate-sub" id="celebrate-sub"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- JAVASCRIPT -->
+<!-- ═══════════════════════════════════ -->
+<script>
+// ─── VERİ ───────────────────────────────────────
+const VAKİTLER_ADI = ['İmsak','Güneş','Öğle','İkindi','Akşam','Yatsı'];
+const VAKİT_İKON   = ['🌙','🌅','☀️','🌤️','🌇','🌃'];
+
+const HADİSLER = [
+  { tr:"Amellerin en hayırlısı az da olsa devamlı olanıdır.", kaynak:"Buhârî, Rikak 18", arabic:"خَيْرُ الْأَعْمَالِ أَدْوَمُهَا وَإِنْ قَلَّ", full:"Hz. Aişe (r.a.) anlatıyor: Rasûlullah (s.a.v.) şöyle buyurdu: 'Amellerin Allah'a en sevimli olanı az da olsa devamlı yapılanıdır.' Hz. Peygamber bir amele başladığında onu sürdürür, devam ederdi." },
+  { tr:"Kolaylaştırınız, zorlaştırmayınız; müjdeleyiniz, nefret ettirmeyiniz.", kaynak:"Buhârî, İlim 11", arabic:"يَسِّرُوا وَلَا تُعَسِّرُوا وَبَشِّرُوا وَلَا تُنَفِّرُوا", full:"Hz. Enes (r.a.) rivayet ediyor: Rasûlullah (s.a.v.) Muaz ve Ebû Musa'yı Yemen'e gönderirken şöyle buyurdu: 'Kolaylaştırınız, zorlaştırmayınız; müjdeleyiniz, nefret ettirmeyiniz; uyuşunuz, ihtilaf etmeyiniz.'" },
+  { tr:"Güler yüzle karşılamak, iyi söz söylemek sadakadır.", kaynak:"Müslim, Zekât 56", arabic:"تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ لَكَ صَدَقَةٌ", full:"Hz. Câbir (r.a.) rivayet ediyor: Rasûlullah (s.a.v.) şöyle buyurdu: 'Her iyilik sadakadır. Kardeşine güler yüzle karşılamak ve ona iyi bir söz söylemek de sadakadır.'" },
+  { tr:"Bir kimse Müslümanım derse onu öldürmeyiniz; o sadece Allah'ın rızasını kasteder.", kaynak:"Müslim, İman 158", arabic:"", full:"İslam'da can emniyeti ve hüsnüzan'ın önemi bu hadiste vurgulanmaktadır." },
+  { tr:"Komşusu açken tok yatan bizden değildir.", kaynak:"Hâkim, Müstedrek", arabic:"مَا آمَنَ بِي مَنْ بَاتَ شَبْعَانًا وَجَارُهُ جَائِعٌ", full:"Bu hadis komşu hakkını ve sosyal dayanışmayı ön plana çıkarır. Bir Müslümanın yalnızca kendi refahını düşünemeyeceğini, etrafındakilerin durumundan sorumlu olduğunu hatırlatır." },
+  { tr:"Mümin müminin aynasıdır.", kaynak:"Ebû Dâvûd, Edeb 49", arabic:"الْمُؤْمِنُ مِرْآةُ الْمُؤْمِنِ", full:"Bu kısa ve özlü hadis, Müslümanların birbirine karşı açık, dürüst ve yardımsever olmasını; birbirinin eksiklerini nazikçe hatırlatmasını emreder. Tıpkı aynada gördüğümüz gibi." },
+  { tr:"Şüphesiz Allah güzeldir, güzelliği sever.", kaynak:"Müslim, İman 147", arabic:"إِنَّ اللَّهَ جَمِيلٌ يُحِبُّ الْجَمَالَ", full:"İbn Mesud'dan (r.a.) rivayet edilmiştir. Kibir hakkında sorulan bir soruya karşı Peygamber (s.a.v.) şöyle buyurmuştur. Burada kastedilen güzellik, hem zahiri temizlik ve düzene verilen önem, hem de ahlaki güzelliktir." },
+];
+
+const ÖZEL_GÜNLER = [
+  { ay:1,  gun:1,  ad:"Yılbaşı",            ikon:"🎆", aciklama:"Miladi yılın ilk günü. Yeni bir yıla girmek, şükür ve dua için güzel bir vesile." },
+  { ay:3,  gun:18, ad:"Çanakkale Zaferi",   ikon:"🦅", aciklama:"1915'te gerçekleşen Çanakkale Deniz Zaferimizin yıl dönümü. Şehitlerimizi rahmetle anıyoruz." },
+  { ay:4,  gun:23, ad:"23 Nisan",           ikon:"🌷", aciklama:"Ulusal Egemenlik ve Çocuk Bayramı." },
+  { ay:5,  gun:19, ad:"19 Mayıs",           ikon:"🏃", aciklama:"Atatürk'ü Anma, Gençlik ve Spor Bayramı." },
+  { ay:8,  gun:30, ad:"30 Ağustos",         ikon:"⭐", aciklama:"Zafer Bayramı. Büyük Taarruz'un 1922'deki zaferiyle bağımsızlığımızın sembolü." },
+  { ay:10, gun:29, ad:"Cumhuriyet Bayramı", ikon:"🇹🇷", aciklama:"29 Ekim 1923'te Türkiye Cumhuriyeti ilan edildi. Cumhuriyetimizin kuruluşunu kutluyoruz." },
+];
+
+const VİRD_PRESETS = [
+  { ad:"Namaz Tesbihatı",    hedef:0,   emoji:"🕌", tesbihat:true },
+  { ad:"100 Salavat",        hedef:100, emoji:"✨" },
+  { ad:"100 İstiğfar",       hedef:100, emoji:"💧" },
+  { ad:"33 Sübhanallah",     hedef:33,  emoji:"🌿" },
+  { ad:"33 Elhamdülillah",   hedef:33,  emoji:"🌸" },
+  { ad:"34 Allahuekber",     hedef:34,  emoji:"⭐" },
+  { ad:"99 Esmaül Hüsna",    hedef:99,  emoji:"🔆" },
+];
+
+// ─── DURUM ──────────────────────────────────────
+let state = {
+  vakitler: null,
+  koordinat: null,
+  sehir: '',
+  darkMode: true,
+  streak: parseInt(localStorage.getItem('streak') || '0'),
+  lastStreakDate: localStorage.getItem('lastStreakDate') || '',
+  kilinanVakitler: JSON.parse(localStorage.getItem('kilinanVakitler') || '{}'),
+  virdler: JSON.parse(localStorage.getItem('virdler') || '[]'),
+};
+let countdownInterval = null;
+let secilenPreset = null;
+
+// ─── SAYFA NAVİGASYONU ──────────────────────────
+function goPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'vird') renderVirdPage();
+  if (id === 'takvim') renderTakvim();
+}
+
+// ─── TEMA ────────────────────────────────────────
+function toggleTheme() {
+  state.darkMode = !state.darkMode;
+  document.body.classList.toggle('light', !state.darkMode);
+  document.querySelector('.icon-btn').textContent = state.darkMode ? '☀' : '🌙';
+}
+
+// ─── TOAST ───────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─── KUTLAMA ─────────────────────────────────────
+function showCelebrate(emoji, title, sub) {
+  document.getElementById('celebrate-emoji').textContent = emoji;
+  document.getElementById('celebrate-title').textContent = title;
+  document.getElementById('celebrate-sub').textContent = sub;
+  const c = document.getElementById('celebrate');
+  c.classList.add('show');
+  if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
+  setTimeout(() => c.classList.remove('show'), 3000);
+}
+
+// ─── MODAL ───────────────────────────────────────
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+
+// ─── HADİS ───────────────────────────────────────
+function loadHadis() {
+  const idx = new Date().getDate() % HADİSLER.length;
+  const h = HADİSLER[idx];
+  document.getElementById('hadis-text').textContent = '"' + h.tr + '"';
+  document.getElementById('hadis-source').textContent = h.kaynak;
+}
+
+function openHadisModal() {
+  const idx = new Date().getDate() % HADİSLER.length;
+  const h = HADİSLER[idx];
+  document.getElementById('hadis-arabic').textContent = h.arabic || '';
+  document.getElementById('hadis-full').textContent = h.full;
+  document.getElementById('hadis-detail-source').textContent = '📖 Kaynak: ' + h.kaynak;
+  openModal('hadis-modal');
+}
+
+// ─── ÖZEL GÜN ────────────────────────────────────
+function checkSpecialDay() {
+  const now = new Date();
+  const gun = now.getDate(), ay = now.getMonth() + 1;
+  const bugun = ÖZEL_GÜNLER.find(g => g.gun === gun && g.ay === ay);
+  if (bugun) {
+    document.getElementById('special-day').style.display = 'flex';
+    document.getElementById('special-day-icon').textContent = bugun.ikon;
+    document.getElementById('special-day-name').textContent = bugun.ad;
+    document.getElementById('special-day-sub').textContent = 'Bugün önemli bir gün · Detay için dokun';
+    document.getElementById('special-day')._data = bugun;
+  }
+}
+
+function openSpecialDay() {
+  const d = document.getElementById('special-day')._data;
+  if (!d) return;
+  document.getElementById('special-modal-content').innerHTML =
+    `<div style="text-align:center; margin-bottom:16px; font-size:52px">${d.ikon}</div>
+     <div style="font-family:'Amiri',serif;font-size:24px;color:var(--gold2);margin-bottom:12px;text-align:center">${d.ad}</div>
+     <div style="font-size:15px;color:var(--text2);line-height:1.8">${d.aciklama}</div>`;
+  openModal('special-modal');
+}
+
+// ─── KONUM & NAMAZ VAKİTLERİ ─────────────────────
+function init() {
+  loadHadis();
+  checkSpecialDay();
+  renderStreak();
+  renderVirdTarih();
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        state.koordinat = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        fetchVakitlerByCoord(state.koordinat.lat, state.koordinat.lng);
+        fetchSehirAdi(state.koordinat.lat, state.koordinat.lng);
+      },
+      () => fetchVakitlerByCity('Erzurum')
+    );
+  } else {
+    fetchVakitlerByCity('Erzurum');
+  }
+}
+
+async function fetchVakitlerByCoord(lat, lng) {
+  try {
+    const res = await fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lng}&method=13`);
+    const data = await res.json();
+    processVakitler(data.data.timings);
+  } catch(e) {
+    document.getElementById('loc-text').textContent = 'Bağlantı hatası';
+  }
+}
+
+async function fetchVakitlerByCity(city) {
+  try {
+    const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Turkey&method=13`);
+    const data = await res.json();
+    state.sehir = city;
+    document.getElementById('loc-text').textContent = city;
+    document.getElementById('ayar-sehir').textContent = city;
+    processVakitler(data.data.timings);
+  } catch(e) {
+    document.getElementById('loc-text').textContent = 'Bağlantı hatası';
+  }
+}
+
+async function fetchSehirAdi(lat, lng) {
+  try {
+    const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=tr`);
+    const data = await res.json();
+    const sehir = data.city || data.locality || data.principalSubdivision || 'Konum alındı';
+    state.sehir = sehir;
+    document.getElementById('loc-text').textContent = sehir;
+    document.getElementById('ayar-sehir').textContent = sehir + ' (GPS)';
+  } catch(e) {
+    document.getElementById('loc-text').textContent = 'GPS ✓';
+  }
+}
+
+function processVakitler(timings) {
+  // Diyanet hesaplama yöntemi ile 6 vakit
+  state.vakitler = {
+    'İmsak':  timings.Imsak,
+    'Güneş':  timings.Sunrise,
+    'Öğle':   timings.Dhuhr,
+    'İkindi': timings.Asr,
+    'Akşam':  timings.Maghrib,
+    'Yatsı':  timings.Isha,
+  };
+  renderVakitler();
+  startCountdown();
+}
+
+// ─── VAKİT RENDER ────────────────────────────────
+function renderVakitler() {
+  if (!state.vakitler) return;
+  const today = todayKey();
+  const kilindi = state.kilinanVakitler[today] || {};
+  const activeIdx = getNextVakitIndex();
+  const html = Object.entries(state.vakitler).map(([ad, saat], i) => {
+    const isActive = i === activeIdx;
+    const isDone = kilindi[ad];
+    return `<div class="vakit-row ${isActive ? 'active' : ''} ${isDone ? 'kilindi' : ''}">
+      <div class="vakit-icon">${VAKİT_İKON[i]}</div>
+      <div class="vakit-name">${ad}</div>
+      <div class="vakit-saat">${saat.substring(0,5)}</div>
+      <div class="vakit-alarm" onclick="kurAlarm('${ad}','${saat.substring(0,5)}')" title="Alarm kur">🔔</div>
+      <div class="vakit-check ${isDone ? 'done' : ''}" onclick="kildimVakit('${ad}')">
+        ${isDone ? '✓' : ''}
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('vakit-list').innerHTML = html;
+  renderKildiSayisi();
+}
+
+function getNextVakitIndex() {
+  if (!state.vakitler) return 0;
+  const now = new Date();
+  const nowMins = now.getHours() * 60 + now.getMinutes();
+  const vakitMins = Object.values(state.vakitler).map(t => {
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  });
+  for (let i = 0; i < vakitMins.length; i++) {
+    if (nowMins < vakitMins[i]) return i;
+  }
+  return 0; // Gece yarısından sonra → İmsak
+}
+
+function getNextVakit() {
+  if (!state.vakitler) return null;
+  const idx = getNextVakitIndex();
+  const entries = Object.entries(state.vakitler);
+  return { ad: entries[idx][0], saat: entries[idx][1], idx };
+}
+
+// ─── GERİ SAYIM ──────────────────────────────────
+function startCountdown() {
+  if (countdownInterval) clearInterval(countdownInterval);
+  updateCountdown();
+  countdownInterval = setInterval(updateCountdown, 1000);
+}
+
+function updateCountdown() {
+  const next = getNextVakit();
+  if (!next) return;
+  document.getElementById('next-name').textContent = next.ad;
+  document.getElementById('next-time').textContent = next.saat.substring(0,5);
+
+  const now = new Date();
+  const [h, m] = next.saat.split(':').map(Number);
+  const target = new Date(now);
+  target.setHours(h, m, 0, 0);
+  if (target <= now) target.setDate(target.getDate() + 1);
+
+  const diff = Math.floor((target - now) / 1000);
+  const hh = Math.floor(diff / 3600);
+  const mm = Math.floor((diff % 3600) / 60);
+  const ss = diff % 60;
+
+  const fmt = (n) => String(n).padStart(2, '0');
+  document.getElementById('countdown').innerHTML =
+    `<span>${fmt(hh)}</span>:${fmt(mm)}:${fmt(ss)}`;
+
+  // Kilidimi güncelle
+  const today = todayKey();
+  const kilindi = state.kilinanVakitler[today] || {};
+  const mainBtn = document.getElementById('kildi-main-btn');
+  if (kilindi[next.ad]) {
+    mainBtn.classList.add('done');
+    mainBtn.innerHTML = '<span>✓</span> Kıldınız';
+  } else {
+    mainBtn.classList.remove('done');
+    mainBtn.innerHTML = '<span>✓</span> Namazı Kıldım';
+  }
+}
+
+// ─── KILINDI ─────────────────────────────────────
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+
+function kildimMain() {
+  const next = getNextVakit();
+  if (!next) return;
+  kildimVakit(next.ad);
+}
+
+function kildimVakit(ad) {
+  const today = todayKey();
+  if (!state.kilinanVakitler[today]) state.kilinanVakitler[today] = {};
+  if (state.kilinanVakitler[today][ad]) {
+    delete state.kilinanVakitler[today][ad];
+    showToast(`${ad} işareti kaldırıldı`);
+  } else {
+    state.kilinanVakitler[today][ad] = true;
+    showToast(`${ad} namazı kaydedildi ✓`);
+    checkStreakUpdate();
+    checkAllPrayers();
+  }
+  localStorage.setItem('kilinanVakitler', JSON.stringify(state.kilinanVakitler));
+  renderVakitler();
+  updateCountdown();
+}
+
+function kurAlarm(ad, saat) {
+  const [h, m] = saat.split(':').map(Number);
+  if (window.AndroidAlarm) {
+    window.AndroidAlarm.set(h, m, ad + ' Namazı vakti');
+  } else if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.alarm) {
+    window.webkit.messageHandlers.alarm.postMessage({hour:h, minute:m, label:ad});
+  } else {
+    // Telefon saat uygulaması intent (Android tarayıcı)
+    const intent = `intent://alarm#Intent;action=android.intent.action.SET_ALARM;i.android.intent.extra.alarm.HOUR=${h};i.android.intent.extra.alarm.MINUTES=${m};S.android.intent.extra.alarm.MESSAGE=${ad}%20Namaz%C4%B1;end`;
+    window.location.href = intent;
+  }
+  showToast(`${ad} için ${saat} alarmı kuruluyor 🔔`);
+}
+
+function renderKildiSayisi() {
+  const today = todayKey();
+  const kilindi = state.kilinanVakitler[today] || {};
+  const sayi = Object.keys(kilindi).length;
+  document.getElementById('kilindi-count').textContent = sayi;
+}
+
+function checkAllPrayers() {
+  const today = todayKey();
+  const kilindi = state.kilinanVakitler[today] || {};
+  if (Object.keys(kilindi).length >= 5) {
+    showCelebrate('🌟', 'Mâşâallah!', 'Bugün 5 vakit namazını tamamladın.\nAllah kabul etsin.');
+  }
+}
+
+// ─── STREAK ──────────────────────────────────────
+function checkStreakUpdate() {
+  const today = todayKey();
+  if (state.lastStreakDate === today) return;
+  const yesterday = (() => {
+    const d = new Date(); d.setDate(d.getDate() - 1);
+    return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+  })();
+  if (state.lastStreakDate === yesterday) {
+    state.streak++;
+  } else if (state.lastStreakDate !== today) {
+    state.streak = 1;
+  }
+  state.lastStreakDate = today;
+  localStorage.setItem('streak', state.streak);
+  localStorage.setItem('lastStreakDate', state.lastStreakDate);
+  renderStreak();
+}
+
+function renderStreak() {
+  document.getElementById('streak-num').textContent = state.streak;
+}
+
+// ─── VİRD ────────────────────────────────────────
+function renderVirdTarih() {
+  const d = new Date();
+  const gun = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+  const ay = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  document.getElementById('vird-tarih').textContent =
+    `${gun[d.getDay()]}, ${d.getDate()} ${ay[d.getMonth()]}`;
+}
+
+function renderVirdPage() {
+  const today = todayKey();
+  const html = state.virdler.map((v, i) => {
+    if (v.tesbihat) {
+      const parcaHtml = v.parcalar.map((p, pi) => {
+        const key = today + '_' + pi;
+        const cur = (v.counts && v.counts[key]) || 0;
+        const done = cur >= p.hedef;
+        const pct = Math.min(100, Math.round(cur / p.hedef * 100));
+        return `<div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:14px;color:var(--text2)">${p.ad}</span>
+            <span style="font-size:15px;font-weight:600;color:${done?'var(--green)':'var(--gold2)'}">${cur}/${p.hedef}</span>
+          </div>
+          <div class="vird-progress"><div class="vird-progress-fill ${done?'done':''}" style="width:${pct}%"></div></div>
+          <button class="vird-tap-btn ${done?'done-btn':''}" style="margin-top:6px" onclick="tapTesbihat(${i},${pi})">
+            ${done?'✓ Tamam':'+ Say'}
+          </button>
+        </div>`;
+      }).join('');
+      return `<div class="vird-card">
+        <div class="vird-card-top">
+          <div class="vird-name">${v.emoji} ${v.ad}</div>
+          <button class="vird-reset-btn" onclick="resetTesbihat(${i})">↺</button>
+        </div>
+        ${parcaHtml}
+      </div>`;
+    }
+    const current = (v.counts && v.counts[today]) || 0;
+    const pct = Math.min(100, Math.round(current / v.hedef * 100));
+    const isDone = current >= v.hedef;
+    return `<div class="vird-card ${isDone ? '' : 'active-vird'}">
+      <div class="vird-card-top">
+        <div>
+          <div class="vird-name">${v.emoji || '📿'} ${v.ad}</div>
+          <div class="vird-count-lbl">Hedef: ${v.hedef}</div>
+        </div>
+        <div class="vird-nums">
+          <div class="vird-current">${current}</div>
+          <div class="vird-target">/ ${v.hedef}</div>
+        </div>
+      </div>
+      <div class="vird-progress">
+        <div class="vird-progress-fill ${isDone ? 'done' : ''}" style="width:${pct}%"></div>
+      </div>
+      <div class="vird-actions">
+        <button class="vird-tap-btn ${isDone ? 'done-btn' : ''}" onclick="tapVird(${i})">
+          ${isDone ? '✓ Tamamlandı' : '+ Say'}
+        </button>
+        <button class="vird-reset-btn" onclick="resetVird(${i})" title="Sıfırla">↺</button>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('vird-list').innerHTML = html ||
+    `<div style="text-align:center;padding:40px;color:var(--text3)">
+      <div style="font-size:48px;margin-bottom:12px">📿</div>
+      <div style="font-size:16px">Henüz vird eklenmedi</div>
+      <div style="font-size:13px;margin-top:6px">+ butonuna dokun</div>
+    </div>`;
+}
+
+function tapTesbihat(i, pi) {
+  const today = todayKey();
+  const v = state.virdler[i];
+  const p = v.parcalar[pi];
+  const key = today + '_' + pi;
+  if (!v.counts) v.counts = {};
+  const cur = v.counts[key] || 0;
+  if (cur >= p.hedef) return;
+  v.counts[key] = cur + 1;
+  if (navigator.vibrate) navigator.vibrate(30);
+  const allDone = v.parcalar.every((pp, ppi) => (v.counts[today+'_'+ppi]||0) >= pp.hedef);
+  if (allDone) showCelebrate('🕌','Mâşâallah!','Namaz tesbihatını tamamladın.\nAllah kabul etsin.');
+  localStorage.setItem('virdler', JSON.stringify(state.virdler));
+  renderVirdPage();
+}
+
+function resetTesbihat(i) {
+  const today = todayKey();
+  const v = state.virdler[i];
+  v.parcalar.forEach((p, pi) => { if(v.counts) v.counts[today+'_'+pi] = 0; });
+  localStorage.setItem('virdler', JSON.stringify(state.virdler));
+  renderVirdPage();
+  showToast('Sıfırlandı');
+}
+
+function tapVird(i) {
+  const today = todayKey();
+  const v = state.virdler[i];
+  if (!v.counts) v.counts = {};
+  const current = (v.counts[today] || 0);
+  if (current >= v.hedef) return;
+  v.counts[today] = current + 1;
+  if (navigator.vibrate) navigator.vibrate(30);
+  if (v.counts[today] >= v.hedef) {
+    showCelebrate('✨', 'Mâşâallah!', `${v.ad} virdinizi tamamladınız!\nAllah kabul etsin.`);
+  }
+  localStorage.setItem('virdler', JSON.stringify(state.virdler));
+  renderVirdPage();
+}
+
+function resetVird(i) {
+  const today = todayKey();
+  const v = state.virdler[i];
+  if (!v.counts) return;
+  v.counts[today] = 0;
+  localStorage.setItem('virdler', JSON.stringify(state.virdler));
+  renderVirdPage();
+  showToast('Sayaç sıfırlandı');
+}
+
+function openVirdModal() {
+  secilenPreset = null;
+  document.getElementById('vird-input-name').value = '';
+  document.getElementById('vird-input-target').value = '';
+  document.getElementById('vird-input-target').disabled = false;
+  document.getElementById('target-wrap').style.opacity = '1';
+  const presetHtml = VİRD_PRESETS.map((p, i) =>
+    `<div class="preset-chip" onclick="selectPreset(${i}, this)">${p.emoji} ${p.ad}</div>`
+  ).join('');
+  document.getElementById('preset-list').innerHTML = presetHtml;
+  openModal('vird-modal');
+}
+
+function selectPreset(i, el) {
+  document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  secilenPreset = VİRD_PRESETS[i];
+  document.getElementById('vird-input-name').value = secilenPreset.ad;
+  if (secilenPreset.tesbihat) {
+    document.getElementById('vird-input-target').value = '';
+    document.getElementById('vird-input-target').disabled = true;
+    document.getElementById('target-wrap').style.opacity = '0.4';
+  } else {
+    document.getElementById('vird-input-target').value = secilenPreset.hedef;
+    document.getElementById('vird-input-target').disabled = false;
+    document.getElementById('target-wrap').style.opacity = '1';
+  }
+}
+
+function saveVird() {
+  const ad = document.getElementById('vird-input-name').value.trim();
+  if (!ad) { showToast('Lütfen bir isim girin'); return; }
+  if (secilenPreset && secilenPreset.tesbihat) {
+    state.virdler.push({ ad, emoji:'🕌', tesbihat:true, parcalar:[
+      { ad:'Sübhanallah',   hedef:33 },
+      { ad:'Elhamdülillah', hedef:33 },
+      { ad:'Allahuekber',   hedef:34 },
+    ], counts:{} });
+  } else {
+    const hedef = parseInt(document.getElementById('vird-input-target').value) || 33;
+    const emoji = secilenPreset ? secilenPreset.emoji : '📿';
+    state.virdler.push({ ad, hedef, emoji, counts: {} });
+  }
+  localStorage.setItem('virdler', JSON.stringify(state.virdler));
+  closeModal('vird-modal');
+  renderVirdPage();
+  showToast(`"${ad}" eklendi`);
+}
+
+// ─── TAKVİM ──────────────────────────────────────
+function renderTakvim() {
+  const d = new Date();
+  const aylar = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  document.getElementById('takvim-month').textContent = `${aylar[d.getMonth()]} ${d.getFullYear()}`;
+  document.getElementById('takvim-hicri').textContent = 'Hicri takvim hesaplanıyor...';
+
+  // Yılın geri kalanındaki özel günleri göster
+  const ayAdi = ['', 'Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+  const mevcutAy = d.getMonth() + 1;
+  const gunler = ÖZEL_GÜNLER
+    .filter(g => g.ay >= mevcutAy)
+    .sort((a, b) => a.ay !== b.ay ? a.ay - b.ay : a.gun - b.gun);
+
+  const html = gunler.map(g =>
+    `<div class="event-card" onclick="openEventDetail(${ÖZEL_GÜNLER.indexOf(g)})">
+      <div class="event-date">
+        <div class="event-day">${g.gun}</div>
+        <div class="event-month">${ayAdi[g.ay]}</div>
+      </div>
+      <div class="event-info">
+        <div class="event-name">${g.ikon} ${g.ad}</div>
+        <div class="event-desc">${g.aciklama.substring(0,80)}...</div>
+      </div>
+    </div>`
+  ).join('');
+  document.getElementById('events-list').innerHTML = html;
+}
+
+function openEventDetail(i) {
+  const d = ÖZEL_GÜNLER[i];
+  document.getElementById('special-modal-content').innerHTML =
+    `<div style="text-align:center;margin-bottom:16px;font-size:52px">${d.ikon}</div>
+     <div style="font-family:'Amiri',serif;font-size:24px;color:var(--gold2);margin-bottom:12px;text-align:center">${d.ad}</div>
+     <div style="font-size:15px;color:var(--text2);line-height:1.8">${d.aciklama}</div>`;
+  openModal('special-modal');
+}
+
+// ─── BAŞLAT ──────────────────────────────────────
+init();
+</script>
+</body>
+</html>
